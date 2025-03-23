@@ -1,15 +1,28 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="p-2">
+    <Button class="d-block w-100 mb-2">
+      + Play Your Quest
+    </Button>
+    <Button 
+      class="d-block w-100 mb-2"
+      @click="() => createMenuOpen = true">
+    + Add New Quest
+    </Button>
+  </div>
+  <create-quest v-model:active="createMenuOpen" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import CreateQuest from './components/CreateQuest.vue';
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    'create-quest': CreateQuest
+  },
+  data() {
+    return {
+      createMenuOpen: false,
+    }
   }
 }
 </script>
