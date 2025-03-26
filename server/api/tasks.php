@@ -3,24 +3,32 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 include "../db.php";
-$results = array();
+include "./util/getQuests.php";
+include "./util/createQuests.php";
 
-$stmt = $db->prepare('
-    SELECT * FROM quests');
-$stmt->execute(array());
+$userId = 1;
 
-$row_count = $stmt->rowCount();
-$results['count'] = $row_count;
-$results['success'] = false;
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $quests = getQuests($db, $userId);
 
-if ($row_count > 0) {
-    $results['success'] = true;
-    $results['quests'] = array();
-    while($book = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        array_push($results['quests'], $book);
+    header('Content-Type: application/json');
+    echo json_encode( $quests );
+    return;
+} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    if (is_array($data)) {
+        createQuests($db, $userId, $data);
+        $quests = getQuests($db, $userId);
+
+        header('Content-Type: application/json');
+        echo json_encode( $quests );
+
+    } else {
+        echo json_encode(["error" => "Invalid input"]);
     }
-}
+    $results['success'] = false;
+} 
 
-header('Content-Type: application/json');
-echo json_encode( $results );
 ?>

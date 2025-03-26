@@ -1,3 +1,4 @@
 RewriteEngine On    # Turn on the rewriting engine
+RewriteRule ^api/examples api/examples.php    [NC,L]
 RewriteRule ^api/tasks api/tasks.php    [NC,L]
 RewriteRule ^api/login api/login.php    [NC,L]
