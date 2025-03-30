@@ -19,9 +19,17 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss">
 body {
   background: #D7D2CC;
+
+  &:has(.play) {
+    background: #70BFE1
+  }
+}
+
+a.p-button {
+  text-decoration: none;
 }
 
 #app {

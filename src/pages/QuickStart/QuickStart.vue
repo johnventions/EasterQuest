@@ -8,7 +8,7 @@
             <p>
                 (You can change or add more to this list later)
             </p>
-            <div v-for="category of getExamples"     
+            <div v-for="category of quickStartExamples"     
                 :key="category.id"
                 class="flex items-center gap-4 mb-2">
                 <Checkbox 
@@ -94,7 +94,10 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getExamples'])
+        ...mapGetters(['getExamples']),
+        quickStartExamples() {
+            return this.getExamples.filter(x => x.suggested);
+        }
     },
     methods: {
         ...mapMutations({
@@ -116,7 +119,20 @@ export default {
         },
         async submit() {
             try {
-                const mapped = this.getExamples.filter(x => this.selectedCategories.indexOf(x.id) > -1);
+                const selectedIds = [
+                    0,
+                    ...this.selectedCategories
+                ];
+                const mapped = this.getExamples.filter(x => selectedIds.indexOf(x.id) > -1);
+                for(let i = 0; i< mapped.length; i++) {
+                    let bt = mapped[i].bodyText ?? '';
+                    if (this.personalize) {
+                        bt = bt.replace('{name}', this.childName);
+                    } else {
+                        bt = bt.replace('{name}', '');
+                    }
+                    mapped[i].bodyText = bt;
+                }
                 const quests = await createQuests(mapped);
                 this.setQuests(quests);
                 setTimeout(() => {

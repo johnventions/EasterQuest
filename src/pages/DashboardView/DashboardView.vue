@@ -4,14 +4,15 @@
         <RouterLink to="/play/0" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
           + Play Your Quest
         </RouterLink>
-    </Button>
-    <Button 
-      class="d-block w-100 mb-2"
-      @click="() => createMenuOpen = true">
-    + Add New Quest
-    </Button>
-    <quest-card v-for="quest in getMyQuests" :key="quest.id" :quest="quest" />
-    <create-quest v-model:active="createMenuOpen" />
+      </Button>
+      <Button 
+        class="d-block w-100 mb-2"
+        @click="() => createMenuOpen = true">
+      + Add New Quest
+      </Button>
+      <quest-card v-for="(quest, i) in getMyQuests" 
+      :key="quest.id" :quest="quest" :index="i" />
+      <create-quest v-model:active="createMenuOpen" />
   </div>
 </template>
 <script>

@@ -1,16 +1,25 @@
 <template>
-    <div class="text-center" v-if="activeQuest">
-        <h2>
-            {{ activeQuest.title}}
-        </h2>
-        <p>
-            {{ activeQuest.bodyText }}
-        </p>
-        <Button asChild v-slot="slotProps">
-        <RouterLink :to="nextPath" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
-          Next
-        </RouterLink>
-      </Button>
+    <div class="play">
+        <div class="text-center p-4" v-if="activeQuest">
+            <div class="d-flex justify-content-left mb-5">
+                <Button @click="back" v-if="canGoBack">
+                    BACK
+                </Button>
+            </div>
+            <div v-if="activeQuest.type < 2">
+                <h2>
+                    {{ activeQuest.title}}
+                </h2>
+                <p>
+                    {{ activeQuest.bodyText }}
+                </p>
+            </div>
+            <Button asChild v-slot="slotProps" v-if="nextReady">
+                <RouterLink :to="nextPath" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
+                {{ nextButtonTxt }}
+                </RouterLink>
+            </Button>
+        </div>
     </div>
 </template>
 <script>
@@ -18,6 +27,22 @@ import { mapGetters } from 'vuex';
 
 export default {
     name: 'PlayMode',
+    data() {
+        return {
+            nextReady: false
+        }
+    },
+    watch: {
+        $route: {
+            handler () {
+                this.nextReady = false;
+                setTimeout(() => {
+                    this.nextReady = true;
+                }, 1000);
+            },
+            immediate: true
+        }
+    },
     computed: {
         ...mapGetters(['getMyQuests']),
         activeIndex() {
@@ -32,12 +57,28 @@ export default {
         },
         nextPath() {
             return `/play/${this.activeIndex + 1}`;
+        },
+        nextButtonTxt() {
+            switch (this.activeQuest.type ?? 0) {
+                case 1:
+                    return "I FOUND IT";
+                default:
+                    return "LET'S GO";
+            }
+        },
+        canGoBack() {
+            return this.activeIndex > 0;
+        }
+    },
+    methods: {
+        back() {
+            this.$router.back();
         }
     }
 }
 </script>
 <style lang="scss" scoped>
     p {
-        white-space: pre;
+        white-space: pre-wrap;
     }
 </style>

@@ -3,7 +3,10 @@
         <template #header>
             <div class="d-flex">
                 <h4>
-                    {{ quest.title }}
+
+                    <template v-if="index">
+                        #{{index}}&nbsp;-
+                    </template>{{ quest.title }}
                 </h4>
             </div>
         </template>
@@ -29,7 +32,16 @@ export default {
         quest: {
             type: Object,
             default: () => ({})
+        },
+        index: {
+            type: Number,
+            default: 0,
         }
     }
 }
 </script>
+<style lang="scss" scoped>
+    p {
+        white-space: pre-wrap;
+    }
+</style>
