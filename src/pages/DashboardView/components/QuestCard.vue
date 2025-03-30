@@ -10,22 +10,52 @@
                 </h4>
             </div>
         </template>
-        <p class="m-0">
+        <p class="m-0" v-if="!editMode">
             {{ quest.bodyText }}
         </p>
+        <Textarea 
+            v-if="editMode"
+            class="w-100"
+            rows="5"
+            v-model="bodyTextEdit" />
         <template #footer>
-            <div class="d-flex justify-content-end">
-                <Button text>
-                    Edit
-                </Button>
-                <Button severity="danger" text>
-                    Delete
-                </Button>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <Button
+                        v-if="editMode"
+                        class="justify-self-start"
+                        @click="save"
+                        >
+                        Save
+                    </Button>
+                </div>
+                <div>
+                    <Button
+                        v-if="!editMode"
+                        @click="() => editMode = true"
+                        text
+                        >
+                        Edit
+                    </Button>
+                    <Button
+                        v-if="editMode"
+                        @click="cancel"
+                        text
+                        >
+                        Cancel
+                    </Button>
+                    <Button severity="danger" text>
+                        Delete
+                    </Button>
+                </div>
             </div>
         </template>
     </Panel>
 </template>
 <script>
+import { updateQuest } from '@/services/api.services';
+import { mapMutations } from 'vuex';
+
 export default {
     name: 'QuestCard',
     props: {
@@ -36,6 +66,34 @@ export default {
         index: {
             type: Number,
             default: 0,
+        }
+    },
+    data() {
+        return {
+            editMode: false,
+            loading: false,
+            bodyTextEdit: ''
+        }
+    },
+    mounted() {
+        this.bodyTextEdit = this.quest.bodyText;
+    },
+    methods: {
+        ...mapMutations({
+            'updateQuest': 'UPDATE_QUEST'
+        }),
+        cancel() {
+            this.editMode = false;
+            this.bodyTextEdit = this.quest.bodyText;
+        },
+        async save() {
+            this.loading == true;
+            const result = await updateQuest(this.quest.id, {
+                bodyText: this.bodyTextEdit
+            });
+            this.updateQuest(result);
+            this.editMode = false;
+            this.loading = false;
         }
     }
 }

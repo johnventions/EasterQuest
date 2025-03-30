@@ -7,9 +7,6 @@
                 </Button>
             </div>
             <div v-if="activeQuest.type < 2">
-                <h2>
-                    {{ activeQuest.title}}
-                </h2>
                 <p>
                     {{ activeQuest.bodyText }}
                 </p>
@@ -59,11 +56,13 @@ export default {
             return `/play/${this.activeIndex + 1}`;
         },
         nextButtonTxt() {
-            switch (this.activeQuest.type ?? 0) {
-                case 1:
+            switch (this.activeQuest.type.toString()) {
+                case "0":
+                    return "LET'S GO";
+                case "1":
                     return "I FOUND IT";
                 default:
-                    return "LET'S GO";
+                    return "NEXT";
             }
         },
         canGoBack() {
