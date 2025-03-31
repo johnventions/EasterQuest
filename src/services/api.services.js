@@ -14,3 +14,8 @@ export const createQuests = async (quests) => {
     const response = await axios.post("/api/tasks", quests);
     return response.data;
 };
+
+export const updateQuest = async (questId, quest) => {
+    const response = await axios.put(`/api/tasks/${questId}`, quest);
+    return response.data;
+}

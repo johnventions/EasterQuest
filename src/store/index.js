@@ -14,6 +14,10 @@ const store = createStore({
       },
       SET_QUESTS(state, quests) {
         state.myQuests = quests;
+      },
+      UPDATE_QUEST(state, quest) {
+        const index = state.myQuests.findIndex(x => x.id == quest.id);
+        state.myQuests.splice(index, 1, quest);
       }
     },
     getters: {
