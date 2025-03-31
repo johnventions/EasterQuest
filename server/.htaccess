@@ -2,3 +2,10 @@ RewriteEngine On    # Turn on the rewriting engine
 RewriteRule ^api/examples api/examples.php    [NC,L]
 RewriteRule ^api/tasks api/tasks.php    [NC,L]
 RewriteRule ^api/login api/login.php    [NC,L]
+
+# Allow direct access to existing files (CSS, JS, images, fonts, etc.)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule .* - [L]
+
+# Redirect everything else to index.html (SPA entry point)
+RewriteRule ^ index.html [L]
