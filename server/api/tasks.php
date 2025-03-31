@@ -1,4 +1,6 @@
 <?php
+header('Content-Type: application/json');
+
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
@@ -11,7 +13,6 @@ $userId = 1;
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $quests = getQuests($db, $userId);
 
-    header('Content-Type: application/json');
     echo json_encode( $quests );
     return;
 } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -22,13 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         createQuests($db, $userId, $data);
         $quests = getQuests($db, $userId);
 
-        header('Content-Type: application/json');
         echo json_encode( $quests );
 
     } else {
         echo json_encode(["error" => "Invalid input"]);
     }
-    $results['success'] = false;
 } 
 
 ?>
