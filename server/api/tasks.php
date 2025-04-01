@@ -4,30 +4,28 @@ header('Content-Type: application/json');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use EasterQuest\QuestService;
+
 include "../db.php";
-include "./util/getQuests.php";
-include "./util/createQuests.php";
 
 $userId = 1;
+$questService = new QuestService($db);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $quests = getQuests($db, $userId);
-
-    echo json_encode( $quests );
+    $quests = $questService->getQuests($userId);
+    echo json_encode($quests);
     return;
-} else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (is_array($data)) {
-        createQuests($db, $userId, $data);
-        $quests = getQuests($db, $userId);
-
-        echo json_encode( $quests );
-
+        $questService->createQuests($userId, $data);
+        $quests = $questService->getQuests($userId);
+        echo json_encode($quests);
     } else {
         echo json_encode(["error" => "Invalid input"]);
     }
-} 
-
+}
 ?>

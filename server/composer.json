@@ -1,0 +1,10 @@
+{
+    "require": {
+        "stripe/stripe-php": "^16.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "EasterQuest\\": "services/"
+        }
+    }
+}

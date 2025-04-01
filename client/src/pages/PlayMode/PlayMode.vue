@@ -1,6 +1,7 @@
 <template>
     <div class="play">
         <div class="text-center p-4" v-if="activeQuest">
+            <img :src="logo" alt="Logo" class="logo mb-4"/>
             <div class="d-flex justify-content-left mb-5">
                 <Button @click="back" v-if="canGoBack">
                     BACK
@@ -21,11 +22,13 @@
 </template>
 <script>
 import { mapGetters } from 'vuex';
+import logo from '@/assets/logo.png';
 
 export default {
     name: 'PlayMode',
     data() {
         return {
+            logo,
             nextReady: false
         }
     },
@@ -79,5 +82,11 @@ export default {
 <style lang="scss" scoped>
     p {
         white-space: pre-wrap;
+    }
+
+    .logo {
+        width: 80%;
+        max-width:  300px;
+        display: block;
     }
 </style>

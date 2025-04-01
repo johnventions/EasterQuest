@@ -80,7 +80,7 @@ export default {
     },
     methods: {
         ...mapMutations({
-            'updateQuest': 'UPDATE_QUEST'
+            'updateQuestList': 'UPDATE_QUEST'
         }),
         cancel() {
             this.editMode = false;
@@ -91,7 +91,7 @@ export default {
             const result = await updateQuest(this.quest.id, {
                 bodyText: this.bodyTextEdit
             });
-            this.updateQuest(result);
+            this.updateQuestList(result);
             this.editMode = false;
             this.loading = false;
         }
