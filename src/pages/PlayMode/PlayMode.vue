@@ -1,7 +1,10 @@
 <template>
-    <div class="play">
-        <div class="text-center p-4" v-if="activeQuest">
-            <img :src="logo" alt="Logo" class="logo mb-4"/>
+    <div class="play container">
+        
+        <div class="row justify-content-center" v-if="activeQuest?.type == 0">
+            <img :src="logo" alt="Logo" class="logo mb-4 w-75 w-md-50"/>
+        </div>
+        <div class="row text-center p-4" v-if="activeQuest">
             <div class="d-flex justify-content-left mb-5">
                 <Button @click="back" v-if="canGoBack">
                     BACK

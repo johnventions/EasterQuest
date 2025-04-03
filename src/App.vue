@@ -21,6 +21,7 @@ export default {
 
 <style lang="scss">
 body {
+  min-height: 100vh;
   background: #5ec0c7;
   background-image: radial-gradient(farthest-corner at 50vw 80vh, #e2fdff 0%, #5ec0c7 100%);
 }
