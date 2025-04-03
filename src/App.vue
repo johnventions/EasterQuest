@@ -2,7 +2,7 @@
   <RouterView />
 </template>
 <script>
-import { getExamples } from '@/services/api.services';
+import { getExamples } from '@/services/api.service';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -21,11 +21,8 @@ export default {
 
 <style lang="scss">
 body {
-  background: #D7D2CC;
-
-  &:has(.play) {
-    background: #70BFE1
-  }
+  background: #5ec0c7;
+  background-image: radial-gradient(farthest-corner at 50vw 80vh, #e2fdff 0%, #5ec0c7 100%);
 }
 
 a.p-button {
@@ -58,5 +55,14 @@ h1, h2, h3, h4, h5, h6 {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+.hidden {
+    position:absolute;
+    left:-10000px;
+    top:auto;
+    width:1px;
+    height:1px;
+    overflow:hidden;
 }
 </style>

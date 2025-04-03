@@ -9,6 +9,8 @@ import InputText from 'primevue/inputtext';
 import Checkbox from 'primevue/checkbox';
 import ToggleSwitch from 'primevue/toggleswitch';
 import Panel from 'primevue/panel';
+import Select from 'primevue/select';
+import Timeline from 'primevue/timeline';
 
 const registerPrimeVue = (app) => {
     app.use(PrimeVue, {
@@ -25,6 +27,8 @@ const registerPrimeVue = (app) => {
     app.component('Checkbox', Checkbox);
     app.component('ToggleSwitch', ToggleSwitch);
     app.component('Panel', Panel);
+    app.component('Select', Select);
+    app.component('Timeline', Timeline);
 }
 
 export default registerPrimeVue;

@@ -53,7 +53,7 @@
     </Panel>
 </template>
 <script>
-import { updateQuest } from '@/services/api.services';
+import { updateQuest } from '@/services/api.service';
 import { mapMutations } from 'vuex';
 
 export default {

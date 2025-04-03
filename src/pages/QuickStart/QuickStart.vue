@@ -66,7 +66,7 @@
     </div>
 </template>
 <script>
-import { createQuests } from '@/services/api.services';
+import { createQuests } from '@/services/api.service';
 import { mapGetters, mapMutations } from 'vuex';
 
 export default {

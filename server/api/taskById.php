@@ -6,11 +6,17 @@ ini_set('display_errors', '1');
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use EasterQuest\QuestService;
+use EasterQuest\UserService;
 
 include "../db.php";
 
 $userId = 1;
 $questService = new QuestService($db);
+
+$userService = new UserService($db);
+$result = $userService->getLoginState();
+
+$userId = $result->getUserId();
 
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $questId = $_GET['id'];

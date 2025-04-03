@@ -19,3 +19,23 @@ export const updateQuest = async (questId, quest) => {
     const response = await axios.put(`/api/tasks/${questId}`, quest);
     return response.data;
 }
+
+export const getLoginState = async () => {
+    const response = await axios.get("/api/login-state");
+    return response.data;
+}
+
+export const registerUser = async (user) => {
+    const response = await axios.post("/api/sign-up", user);
+    return response.data;
+}
+
+export const loginUser = async (user) => {
+    const response = await axios.post("/api/login", user);
+    return response.data;
+}
+
+export const checkout = async (user) => {
+    const response = await axios.post("/api/checkout", user);
+    return response.data;
+}
