@@ -72,7 +72,7 @@ Nulla vitae neque non est pretium mollis.
   ],
   [
     "id" => 6,
-    "title" => 'Behind the TV',
+    "title" => 'In a Backpack',
     "type" => 1,
     "suggested" => true,
     "bodyText" => "Lorem ipsum dolor sit amet,
