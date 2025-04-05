@@ -1,6 +1,5 @@
 <template>
     <div class="play container">
-        
         <div class="row justify-content-center" v-if="activeQuest?.type == 0">
             <img :src="logo" alt="Logo" class="logo mb-4 w-75 w-md-50"/>
         </div>
@@ -20,15 +19,20 @@
                 {{ nextButtonTxt }}
                 </RouterLink>
             </Button>
+            <chocolate-bunny />
         </div>
     </div>
 </template>
 <script>
 import { mapGetters } from 'vuex';
 import logo from '@/assets/logo.png';
+import ChocolateBunnyVue from '@/components/Games/ChocolateBunny/ChocolateBunny.vue';
 
 export default {
     name: 'PlayMode',
+    components: {
+        'chocolate-bunny': ChocolateBunnyVue,
+    },
     data() {
         return {
             logo,
