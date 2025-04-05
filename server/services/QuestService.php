@@ -87,12 +87,29 @@ class QuestService
         WHERE 
             userId = :userId
             AND id = :id 
-    ");
+        ");
 
         // Bind parameters
         $stmt->bindParam(':userId', $userId,  PDO::PARAM_INT);
         $stmt->bindParam(':id', $questId, PDO::PARAM_INT);
         $stmt->bindParam(':bodyText', $quest['bodyText'], PDO::PARAM_STR);
+
+        $stmt->execute();
+
+        // Commit transaction
+        $this->db->commit();
+    }
+
+    public function deleteQuestById($userId, $questId)
+    {
+        // Begin transaction
+        $this->db->beginTransaction();
+
+        $stmt = $this->db->prepare("DELETE FROM quests WHERE userId = :userId AND id = :id");
+
+        // Bind parameters
+        $stmt->bindParam(':userId', $userId,  PDO::PARAM_INT);
+        $stmt->bindParam(':id', $questId, PDO::PARAM_INT);
 
         $stmt->execute();
 

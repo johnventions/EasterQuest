@@ -1,27 +1,34 @@
 <template>
-    <div class="play container">
-        <div class="row justify-content-center" v-if="activeQuest?.type == 0">
-            <img :src="logo" alt="Logo" class="logo mb-4 w-75 w-md-50"/>
+    <div class="play">
+        <div class="play container">
+            <div class="row justify-content-center" v-if="activeQuest?.type == 0">
+                <img :src="logo" alt="Logo" class="logo mb-4 w-75 w-md-50"/>
+            </div>
+            <div class="row text-center mt-2" v-if="activeQuest">
+                <div class="d-flex justify-content-left mb-5">
+                    <Button @click="back" v-if="canGoBack">
+                        BACK
+                    </Button>
+                </div>
+                <div v-if="activeQuest.type < 2">
+                    <p>
+                        {{ activeQuest.bodyText }}
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="row text-center p-4" v-if="activeQuest">
-            <div class="d-flex justify-content-left mb-5">
-                <Button @click="back" v-if="canGoBack">
-                    BACK
-                </Button>
-            </div>
-            <div v-if="activeQuest.type < 2">
-                <p>
-                    {{ activeQuest.bodyText }}
-                </p>
-            </div>
-            <Button asChild v-slot="slotProps" v-if="nextReady">
-                <RouterLink :to="nextPath" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
-                {{ nextButtonTxt }}
-                </RouterLink>
-            </Button>
+        <div class="container-fluid p-0" v-if="activeQuest.type == 3">
             <chocolate-bunny />
         </div>
+        <div class="container text-center mt-2">
+            <Button asChild v-slot="slotProps" v-if="nextReady">
+                    <RouterLink :to="nextPath" :class="slotProps.class" class="mb-2 text-center">
+                    {{ nextButtonTxt }}
+                    </RouterLink>
+                </Button>
+        </div>
     </div>
+    
 </template>
 <script>
 import { mapGetters } from 'vuex';

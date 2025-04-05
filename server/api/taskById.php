@@ -26,5 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $quest = $questService->getQuestById($userId, $questId);
 
     echo json_encode($quest);
+} else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $questId = $_GET['id'];
+    $questService->deleteQuestById($userId, $questId);
+    echo json_encode(['message' => 'Quest deleted successfully']);
+} else {
+    http_response_code(405); // Method Not Allowed
+    echo json_encode(['error' => 'Method not allowed']);
 }
 ?>

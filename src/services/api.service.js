@@ -20,6 +20,11 @@ export const updateQuest = async (questId, quest) => {
     return response.data;
 }
 
+export const deleteQuest = async (questId) => {
+    const response = await axios.delete(`/api/tasks/${questId}`);
+    return response.data;
+}
+
 export const getLoginState = async () => {
     const response = await axios.get("/api/login-state");
     return response.data;

@@ -25,6 +25,10 @@ const store = createStore({
         const index = state.myQuests.findIndex(x => x.id == quest.id);
         state.myQuests.splice(index, 1, quest);
       },
+      DELETE_QUEST(state, questId) {
+        const index = state.myQuests.findIndex(x => x.id == questId);
+        state.myQuests.splice(index, 1);
+      },
       SET_LOGIN_STATE(state, loginState) {
         state.isLoggedIn = loginState.isLoggedIn;
         state.user = loginState.userId;

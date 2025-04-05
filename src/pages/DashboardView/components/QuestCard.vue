@@ -2,12 +2,14 @@
     <Panel class="w-100 mb-2">
         <template #header>
             <div class="d-flex">
-                <h4>
-
+                <template v-if="!editMode">
+                    <h4>
                     <template v-if="index">
                         #{{index}}&nbsp;-
                     </template>{{ quest.title }}
-                </h4>
+                    </h4>
+                </template>
+                
             </div>
         </template>
         <p class="m-0" v-if="!editMode">
@@ -44,7 +46,7 @@
                         >
                         Cancel
                     </Button>
-                    <Button severity="danger" text>
+                    <Button severity="danger" text @click="deleteQuest">
                         Delete
                     </Button>
                 </div>
@@ -53,7 +55,7 @@
     </Panel>
 </template>
 <script>
-import { updateQuest } from '@/services/api.service';
+import { updateQuest, deleteQuest } from '@/services/api.service';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -80,7 +82,9 @@ export default {
     },
     methods: {
         ...mapMutations({
-            'updateQuestList': 'UPDATE_QUEST'
+            'updateQuestList': 'UPDATE_QUEST',
+            'deleteQuestById': 'DELETE_QUEST',
+
         }),
         cancel() {
             this.editMode = false;
@@ -93,6 +97,12 @@ export default {
             });
             this.updateQuestList(result);
             this.editMode = false;
+            this.loading = false;
+        },
+        async deleteQuest() {
+            this.loading = true;
+            await deleteQuest(this.quest.id);
+            this.deleteQuestById(this.quest.id);
             this.loading = false;
         }
     }

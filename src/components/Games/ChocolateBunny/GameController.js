@@ -1,85 +1,112 @@
-import {
-    Application,
-    Assets,
-    Sprite,
-    RenderTexture,
-    Graphics,
-    Rectangle,
-} from 'pixi.js';
+/* eslint-disable no-unused-vars */
+import bunnyOutline from '@/assets/games/x.png';
+import bunny from '@/assets/games/chocolate_bunny.png';
+import grass from '@/assets/games/bg_grass.jpg';
+
+import { Application, Assets, Sprite, Graphics, RenderTexture, Rectangle } from 'pixi.js';
 
 class GameController {
-    constructor(canvas) {
+    constructor(canvas, width = 300, height = 450) {
         const app = new Application({
-            resizeTo: window,
-            autoDensity: true,
+            width,
+            height,
+            autoDensity: canvas,
+            resolution: window.devicePixelRatio || 1,
             background: 'white',
         });
 
         canvas.appendChild(app.view);
-
-        app.view.style.touchAction = 'auto';
-        app.view.style.pointerEvents = 'auto';
-
         this.app = app;
-        this.brush = null;
-        this.maskTexture = null;
+        this.ratio = width / height;
+        console.log(width, height, this.ratio);
     }
 
     async init() {
-        const texture = await Assets.load(
-            'https://cdn11.bigcommerce.com/s-7i4g8cpydv/images/stencil/1000x1000/products/1336/3436/Flat_Trad_Bunny_Painted_WEB__90799.1740662625.png?c=2'
-        );
-        const bunnySprite = new Sprite(texture);
-        bunnySprite.x = (this.app.screen.width - bunnySprite.width) / 2;
-        bunnySprite.y = (this.app.screen.height - bunnySprite.height) / 2;
+        const brushSize = 100 * this.ratio; // Size of the brush (black dot)
+        // Create a brush (black dot) for erasing areas in the mask
+        const brush = new Graphics();
+        brush.beginFill(0x000000); // Black color for masking (hiding)
+        brush.drawCircle(0, 0, brushSize); // Dot with radius of 20 pixels
+        brush.endFill();
 
-        // Step 1: Create a mask texture and sprite
-        this.maskTexture = RenderTexture.create({
+        await this.loadGrass(this.app);
+        const baseSprite = await this.loadBunny(this.app, this.ratio);
+        const maskSprite = await this.loadMask(this.app, baseSprite);
+
+        // Create a RenderTexture for the mask to modify it
+        const maskTexture = RenderTexture.create({
             width: this.app.screen.width,
             height: this.app.screen.height,
         });
 
-        const maskSprite = new Sprite(this.maskTexture);
+        // Set the initial mask texture using the RenderTexture
+        this.app.renderer.render(maskSprite, { renderTexture: maskTexture });
+        const dynamicMaskSprite = new Sprite(maskTexture); // This is the sprite that will be used as the mask
 
-        // Step 2: Fill the mask with white (fully visible)
-        const initMask = new Graphics();
-        initMask.beginFill(0xffffff, 1); // white = visible
-        initMask.drawRect(0, 0, this.app.screen.width, this.app.screen.height);
-        initMask.endFill();
-        this.app.renderer.render(initMask, { renderTexture: this.maskTexture });
+        // Apply the mask to the base image
+        baseSprite.mask = dynamicMaskSprite;
 
-        // Step 3: Assign the mask to the bunny
-        bunnySprite.mask = maskSprite;
 
-        // Step 4: Create a black brush to "erase"
-        this.brush = new Graphics();
-        this.brush.beginFill(0x000000, 1); // black = hidden in mask
-        this.brush.drawCircle(0, 0, 25);
-        this.brush.endFill();
-
-        const eraseMask = (x, y) => {
-            this.brush.position.set(x, y);
-            this.app.renderer.render(this.brush, {
-                renderTexture: this.maskTexture,
-                clear: false,
+        // Function to add black dot to the mask at the pointer position
+        const addMaskDot = (x, y) => {
+            brush.position.set(x, y);
+            this.app.renderer.render(brush, {
+                renderTexture: maskTexture,
+                clear: false, // Don't clear the previous dots
             });
         };
 
+        // Pointer down event listener to add black dots to the mask
         const onPointerDown = (event) => {
             const { x, y } = event.global;
-            eraseMask(x, y);
+            addMaskDot(x, y); // Add black dot at the clicked position
         };
 
-        // Interaction layer to catch clicks
+        // Interaction layer to catch pointer events
         const interactionLayer = new Graphics();
         interactionLayer.hitArea = new Rectangle(0, 0, this.app.screen.width, this.app.screen.height);
         interactionLayer.eventMode = 'static';
         interactionLayer.on('pointerdown', onPointerDown);
 
-        // Add in proper order
-        this.app.stage.addChild(maskSprite);       // mask must be part of stage
-        this.app.stage.addChild(bunnySprite);      // bunny uses the mask
-        this.app.stage.addChild(interactionLayer); // sits above for interaction
+        // Add the images to the stage
+        this.app.stage.addChild(baseSprite);   // Base image (Eiffel Tower)
+        this.app.stage.addChild(dynamicMaskSprite);   // Mask image (black and white)
+        this.app.stage.addChild(interactionLayer); // For interaction detection
+    }
+
+
+    async loadGrass(app) {
+        const grassBg = await Assets.load(grass);
+        
+        const grassTexture = Sprite.from(grassBg);
+        grassTexture.width = app.screen.width;
+        grassTexture.height = app.screen.height;
+        grassTexture.x = 0;
+        grassTexture.y = 0;
+        app.stage.addChild(grassTexture);
+    }
+
+    async loadBunny(app, ratio) {
+        console.log(ratio);
+        // Load the base image (Eiffel Tower)
+        const baseImage = await Assets.load(bunny);
+        const baseSprite = new Sprite(baseImage);
+        baseSprite.width = app.screen.width * (1 / ratio);
+        baseSprite.height = baseSprite.width;
+        baseSprite.x = (app.screen.width - baseSprite.width) / 2;
+        baseSprite.y = (app.screen.height - baseSprite.height) / 2;
+        return baseSprite;
+    }
+
+    async loadMask(app, baseSprite) {
+        // Load the mask image (black and white)
+        const maskImage = await Assets.load(bunnyOutline);
+        const maskSprite = new Sprite(maskImage);
+        maskSprite.width = baseSprite.width
+        maskSprite.height = baseSprite.height;
+        maskSprite.x = (app.screen.width - maskSprite.width) / 2;
+        maskSprite.y = (app.screen.height - maskSprite.height) / 2;
+        return maskSprite;
     }
 }
 

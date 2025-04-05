@@ -25,34 +25,47 @@
         </div>
         
         <div v-else-if="step == 2">
-            <h2>
+            <h2 v-if="type == 1">
                 Choose a pre-made template below or make your own
+            </h2>
+            <h2 v-if="type == 3">
+                Choose a game
             </h2>
             <Select
                 v-model="selectedTemplate"
                 @change="handleTemplateSelect"
-                :options="findIts"
+                :options="allowedForType"
                 option-label="title"
                 option-value="id"
                 class="w-100 mb-4"
                 filter
             />
-            <Button @click="makeCustom" text>
+            <Button @click="makeCustom" text v-if="type != 3">
                 Make My Own
+            </Button>
+            <Button
+                v-if="type == 3"
+                class="d-block w-75 mb-2"
+                @click="saveQuest()"
+            >
+                SAVE
             </Button>
         </div>
         <div v-else-if="step == 3">
-            <InputText
-                type="text"
-                class="w-100 mb-2"
-                v-model="quest.title"
-                placeholder="Title" />
-            <Textarea
-                v-model="quest.bodyText"
-                class="w-100 mb-2"
-                rows="5" 
-                cols="30"
-                placeholder="Message" />
+            <tempate v-if="type != 3">
+                <h2>Find Something</h2>
+                <InputText
+                    type="text"
+                    class="w-100 mb-2"
+                    v-model="quest.title"
+                    placeholder="Title" />
+                <Textarea
+                    v-model="quest.bodyText"
+                    class="w-100 mb-2"
+                    rows="5" 
+                    cols="30"
+                    placeholder="Message" />
+            </tempate>
             <Button
                 class="d-block w-75 mb-2"
                 @click="saveQuest()"
@@ -77,7 +90,7 @@ export default {
     data() {
         return {
             step: 1,
-            type: null,
+            type: 1,
             localActive: false,
             quest: {},
             selectedTemplate: null,
@@ -85,8 +98,8 @@ export default {
     },
     computed: {
         ...mapGetters(['getExamples']),
-        findIts() {
-            return this.getExamples.filter(x => x.type == 1);
+        allowedForType() {
+            return this.getExamples.filter(x => x.type == this.type);
         }
     },
     watch: {
@@ -95,6 +108,7 @@ export default {
         },
         active (newValue) {
             this.localActive = newValue;
+            this.step = 1;
         }
     },
     methods: {
@@ -113,10 +127,12 @@ export default {
             this.step = 3;
         },
         handleTemplateSelect() {
-            const selected = this.findIts.find(x => x.id == this.selectedTemplate);
+            const selected = this.allowedForType.find(x => x.id == this.selectedTemplate);
             if (selected) {
                 this.quest = { ...selected };
-                this.step = 3;
+                if (this.type != 3) {
+                    this.step = 3;
+                }
             }
         },
         async saveQuest() {
@@ -126,8 +142,8 @@ export default {
                     type: this.type,
                 }];
                 const response = await createQuests(questData);
-                if (response.status === 200) {
-                    this.addQuests(response.data);
+                if (response != null) {
+                    this.addQuests([questData]);
                     this.localActive = false;
                 } else {
                     console.error('Error creating quest:', response.statusText);

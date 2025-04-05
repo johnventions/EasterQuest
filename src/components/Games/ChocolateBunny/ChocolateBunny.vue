@@ -17,10 +17,8 @@ export default {
         };
     },
     async mounted() {
-             // settings.RESOLUTION = window.devicePixelRatio || 1;
         const canvas = this.$refs.pixi;
-        console.log(this.$refs, canvas);
-        const controller = new GameController(canvas);
+        const controller = new GameController(canvas, canvas.offsetWidth, window.innerHeight * 0.75);
 
         this.controller = controller;
         await controller.init();
@@ -31,7 +29,6 @@ export default {
 #pixi {
     > canvas {
         width: 100%;
-        height: 100%;
         max-width: 100%;
     }
 }
