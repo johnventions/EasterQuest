@@ -4,7 +4,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../secrets.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 
 use EasterQuest\UserService;
 include "../db.php";
@@ -17,7 +19,7 @@ if (!$session_id) {
 }
 
 
-\Stripe\Stripe::setApiKey($secret_key);
+\Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET']);
 
 // Retrieve the checkout session from Stripe
 try {
@@ -38,8 +40,8 @@ try {
 
         $userService = new UserService($db);
 
-        $result = $userService->register($email, $defaultPass);
-        $result = $userService->login($email, $defaultPass);
+        $result = $userService->register($email, $_ENV['DEFAULT_PASS'], true);
+        $result = $userService->login($email, $_ENV['DEFAULT_PASS']);
 
         Header('Location: /dash?session_id=' . urlencode($session_id));
         exit();

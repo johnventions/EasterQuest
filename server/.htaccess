@@ -2,8 +2,10 @@ RewriteEngine On    # Turn on the rewriting engine
 RewriteRule ^api/examples api/examples.php    [NC,L]
 
 RewriteRule ^stripe/success api/stripe-success.php    [NC,L]
+RewriteRule ^api/qr-code/([0-9a-zA-Z_-]+)$ api/qr-code.php?id=$1 [NC,L]
 RewriteRule ^api/tasks/([0-9a-zA-Z_-]+)$ api/taskById.php?id=$1 [NC,L]
 RewriteRule ^api/tasks api/tasks.php    [NC,L]
+RewriteRule ^api/shared/([0-9a-zA-Z_-]+)$ api/sharedTasks.php?id=$1 [NC,L]
 RewriteRule ^api/login-state api/check-auth.php    [NC,L]
 RewriteRule ^api/login api/login.php    [NC,L]
 RewriteRule ^api/sign-up api/force-register.php    [NC,L]

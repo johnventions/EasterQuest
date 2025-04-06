@@ -7,7 +7,7 @@ import PlayMode from '@/pages/PlayMode/PlayMode.vue';
 import Register from '@/pages/Register/Register.vue';
 
 import store from '@/store';
-import { getQuests, getLoginState } from '@/services/api.service';
+import { getQuests, getLoginState, getSharedQuests } from '@/services/api.service';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
 
 
@@ -21,7 +21,6 @@ const getQuestsCount = async () => {
     }
     return store.state.myQuests.length;
 }
-
 
 const mustHaveQuests = async (next) => {
     if(await getQuestsCount() == 0) {
@@ -39,8 +38,16 @@ const mustNotHaveQuests = async (next) => {
     next();
 }
 
+const loadSharedQuests = async (to) => {
+    console.log(to.params);
+    if ((store.state.myQuests ?? []).length == 0) {
+        const questList = await getSharedQuests(to.params.shareId);
+        store.commit('SET_QUESTS', questList.data);
+    }
+}
+
 const isUserLoggedIn = async () => {
-    if (store.isLoggedIn == null) {
+    if (store.state.isLoggedIn == null) {
         // we don't know if they are logged in
         const loginState = await getLoginState();
         store.commit('SET_LOGIN_STATE', loginState);
@@ -48,12 +55,13 @@ const isUserLoggedIn = async () => {
             return true;
         }
     }
-    return store.isLoggedIn;
+    return store.state.isLoggedIn;
 }
 
 const mustBeLoggedIn = async (next) => {
-    if (await isUserLoggedIn()) {
-        next();
+    const ls = await isUserLoggedIn();
+    if (ls) {
+        return next();
     }
     next({ name: 'Login' });
 }
@@ -117,6 +125,24 @@ const routes = [
             await mustHaveQuests(next);
         },
     },
+    {
+        
+        path: '/share/:shareId',
+        component: PlayMode,
+        name: 'Share',
+        meta: { requiresAuth: false },
+        beforeEnter: async (to, from, next) => {
+            await loadSharedQuests(to);
+            next();
+        },
+        children: [
+            {
+                path: ':id',
+                name: 'SharePage',
+                component: PlayMode,
+            }
+        ]
+    }
 ]
 
 const router = createRouter({
@@ -128,6 +154,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // this route requires auth, check if logged in
+        console.log('checking auth');
         await mustBeLoggedIn(next);
     } else {
         next(); // always call next() to resolve the hook

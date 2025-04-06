@@ -6,6 +6,7 @@ const store = createStore({
       return {
         isLoggedIn: null,
         userId: null,
+        shareCode: '',
         examples: [],
         myQuests: null,
       }
@@ -31,13 +32,15 @@ const store = createStore({
       },
       SET_LOGIN_STATE(state, loginState) {
         state.isLoggedIn = loginState.isLoggedIn;
-        state.user = loginState.userId;
+        state.userId = loginState.userId;
+        state.shareCode = loginState.shareId;
       },
     },
     getters: {
       getExamples: (state) => state.examples ?? [],
       getMyQuests: (state) => state.myQuests ?? [],
-      getIsLoggedIn: (state) => state.isLoggedIn ?? [],
+      getIsLoggedIn: (state) => state.isLoggedIn ?? false,
+      getShareCode: (state) => state.shareCode ?? '',
     }
   })
 

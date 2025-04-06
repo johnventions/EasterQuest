@@ -4,7 +4,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../secrets.php';
 
 use EasterQuest\UserService;
 
@@ -19,7 +18,7 @@ if (isset($data['email'], $data['access_code'], $data['password'])) {
     }
 
     $userService = new UserService($db);
-    $result = $userService->register($data['email'], $data['password']);
+    $result = $userService->register($data['email'], $data['password'], true);
     echo $result->toJson();
 } else {
     die('Email is missing.');

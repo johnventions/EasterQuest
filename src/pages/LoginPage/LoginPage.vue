@@ -61,8 +61,6 @@ export default {
                 const response = await loginUser(data);
                 this.setLogin(response);
                 this.$router.push({ name: 'Dashboard' });
-                console.log('User registered successfully:', response.data);
-
             } catch (error) {
                 console.error('Error registering user:', error);
             }

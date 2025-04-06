@@ -10,7 +10,6 @@ use EasterQuest\UserService;
 
 include "../db.php";
 
-$userId = 1;
 $questService = new QuestService($db);
 
 $userService = new UserService($db);

@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
-import bunnyOutline from '@/assets/games/x.png';
+import bunnyOutline from '@/assets/games/bunny_mask.png';
 import bunny from '@/assets/games/chocolate_bunny.png';
 import grass from '@/assets/games/bg_grass.jpg';
+
 
 import { Application, Assets, Sprite, Graphics, RenderTexture, Rectangle } from 'pixi.js';
 

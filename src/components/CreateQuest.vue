@@ -52,7 +52,7 @@
             </Button>
         </div>
         <div v-else-if="step == 3">
-            <tempate v-if="type != 3">
+            <template v-if="type != 3">
                 <h2>Find Something</h2>
                 <InputText
                     type="text"
@@ -65,7 +65,7 @@
                     rows="5" 
                     cols="30"
                     placeholder="Message" />
-            </tempate>
+            </template>
             <Button
                 class="d-block w-75 mb-2"
                 @click="saveQuest()"
@@ -143,7 +143,7 @@ export default {
                 }];
                 const response = await createQuests(questData);
                 if (response != null) {
-                    this.addQuests([questData]);
+                    this.addQuests(response);
                     this.localActive = false;
                 } else {
                     console.error('Error creating quest:', response.statusText);

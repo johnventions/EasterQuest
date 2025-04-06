@@ -15,6 +15,13 @@ class QuestService
 
     public function createQuests($userId, $quests)
     {
+        $stmt = $this->db->prepare('SELECT MAX(id) as maxId FROM quests WHERE userId = :userId');
+        $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        $maxId = $result['maxId'] ?? null;
+
         $this->db->beginTransaction();
 
         $sql = 'INSERT INTO quests (userId, type, templateId, title, bodyText) VALUES ';
@@ -48,6 +55,16 @@ class QuestService
 
         // Commit transaction
         $this->db->commit();
+        
+        $stmt2 = $this->db->prepare('
+            SELECT * FROM quests WHERE userId = :userId AND id > :maxId
+        ');
+
+        $stmt2->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt2->bindParam(':maxId', $maxId, PDO::PARAM_INT);
+        $stmt2->execute();
+
+        return $stmt2->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getQuests($userId)
@@ -115,5 +132,21 @@ class QuestService
 
         // Commit transaction
         $this->db->commit();
+    }
+
+    
+    public function getSharedQuests($userId, $shareId) {
+        $stmt = $this->db->prepare('
+            SELECT q.* FROM quests q
+            JOIN user_settings us ON q.userId = us.userId
+            WHERE us.userId = :userId
+                AND us.shareId = :shareId
+        ');
+
+        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        $stmt->bindParam(':shareId', $shareId, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

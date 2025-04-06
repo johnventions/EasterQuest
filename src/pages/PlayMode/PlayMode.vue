@@ -17,8 +17,9 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid p-0" v-if="activeQuest.type == 3">
-            <chocolate-bunny />
+        <div class="container-fluid p-0" v-if="activeQuest?.type == 3">
+            <chocolate-bunny v-if="activeQuest.templateId == 1001" />
+            <egg-basket v-if="activeQuest.templateId == 1002" />
         </div>
         <div class="container text-center mt-2">
             <Button asChild v-slot="slotProps" v-if="nextReady">
@@ -34,11 +35,12 @@
 import { mapGetters } from 'vuex';
 import logo from '@/assets/logo.png';
 import ChocolateBunnyVue from '@/components/Games/ChocolateBunny/ChocolateBunny.vue';
-
+import EggBasketVue from '@/components/Games/EggBasket/EggBasket.vue';
 export default {
     name: 'PlayMode',
     components: {
         'chocolate-bunny': ChocolateBunnyVue,
+        'egg-basket': EggBasketVue
     },
     data() {
         return {
@@ -61,7 +63,7 @@ export default {
         ...mapGetters(['getMyQuests']),
         activeIndex() {
             const { id } = this.$route.params;
-            return parseInt(id);
+            return parseInt(id ?? "0");
         },
         activeQuest() {
             if (this.activeIndex < this.getMyQuests.length) {
@@ -70,10 +72,13 @@ export default {
             return null;
         },
         nextPath() {
-            return `/play/${this.activeIndex + 1}`;
+            if (this.$route.name == 'Play') {
+                return `/play/${this.activeIndex + 1}`;
+            }
+            return `/share/${this.$route.params.shareId}/${this.activeIndex + 1}`;
         },
         nextButtonTxt() {
-            switch (this.activeQuest.type.toString()) {
+            switch (this.activeQuest?.type.toString()) {
                 case "0":
                     return "LET'S GO";
                 case "1":

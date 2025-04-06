@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $data = json_decode(file_get_contents("php://input"), true);
 
     if (is_array($data)) {
-        $questService->createQuests($userId, $data);
-        $quests = $questService->getQuests($userId);
+        $quests = $questService->createQuests($userId, $data);
         echo json_encode($quests);
     } else {
         echo json_encode(["error" => "Invalid input"]);

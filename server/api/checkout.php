@@ -4,7 +4,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../secrets.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 $result = array(
   'url' => '',
@@ -17,9 +19,9 @@ if (!isset($data['email'])) {
   exit;
 }
 
-\Stripe\Stripe::setApiKey($secret_key);
+\Stripe\Stripe::setApiKey($_ENV['STRIPE_SECRET']);
 
-$YOUR_DOMAIN = 'http://localhost:8082';
+$YOUR_DOMAIN = $_ENV['PUBLIC_DOMAIN'] ?? 'https://easterquest.com';
 
 $checkout_session = \Stripe\Checkout\Session::create([
   'ui_mode' => 'hosted',

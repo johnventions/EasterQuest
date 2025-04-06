@@ -10,6 +10,11 @@ export const getQuests = async () => {
     return quests;
 };
 
+export const getSharedQuests = async (id) => {
+    const quests = axios.get(`/api/shared/${id}`);
+    return quests; 
+}
+
 export const createQuests = async (quests) => {
     const response = await axios.post("/api/tasks", quests);
     return response.data;
