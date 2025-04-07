@@ -20,9 +20,10 @@
         <div class="container-fluid p-0" v-if="activeQuest?.type == 3">
             <chocolate-bunny v-if="activeQuest.templateId == 1001" />
             <egg-basket v-if="activeQuest.templateId == 1002" />
+            <feed-the-bunny v-if="activeQuest.templateId == 1003" />
         </div>
         <div class="container text-center mt-2">
-            <Button asChild v-slot="slotProps" v-if="nextReady">
+            <Button asChild v-slot="slotProps" v-if="nextReady && (activeIndex + 1) < getMyQuests.length">
                     <RouterLink :to="nextPath" :class="slotProps.class" class="mb-2 text-center">
                     {{ nextButtonTxt }}
                     </RouterLink>
@@ -36,11 +37,14 @@ import { mapGetters } from 'vuex';
 import logo from '@/assets/logo.png';
 import ChocolateBunnyVue from '@/components/Games/ChocolateBunny/ChocolateBunny.vue';
 import EggBasketVue from '@/components/Games/EggBasket/EggBasket.vue';
+import FeedTheBunnyGame from '@/components/Games/FeedTheBunny/FeedTheBunny.vue';
+
 export default {
     name: 'PlayMode',
     components: {
         'chocolate-bunny': ChocolateBunnyVue,
-        'egg-basket': EggBasketVue
+        'egg-basket': EggBasketVue,
+        'feed-the-bunny': FeedTheBunnyGame
     },
     data() {
         return {

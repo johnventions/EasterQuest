@@ -3,10 +3,10 @@
 $playIts = [ [
   "id" => 1000,
   "gameId" => 1000,
-  "title" => 'Random Game',
+  "title" => 'Game Break',
   "type" => 3,
   "suggested" => false,
-  "bodyText" => "",
+  "bodyText" => "Game break! Edit to choose a specific game (optional)",
   ],
   [
     "id" => 1001,
@@ -14,7 +14,7 @@ $playIts = [ [
     "title" => 'Eat The Chocolate Bunny',
     "type" => 3,
     "suggested" => false,
-    "bodyText" => "",
+    "bodyText" => "Tap to eat the chocolate bunny",
   ],
   [
     "id" => 1002,
@@ -22,6 +22,14 @@ $playIts = [ [
     "title" => 'Put The Eggs In The Basket',
     "type" => 3,
     "suggested" => false,
-    "bodyText" => "",
+    "bodyText" => "Drag the eggs into the basket",
+  ],
+  [
+    "id" => 1003,
+    "gameId" => 1003,
+    "title" => 'Feed The Bunny',
+    "type" => 3,
+    "suggested" => false,
+    "bodyText" => "Pull the carrots and feed them to the bunny",
   ]
 ];

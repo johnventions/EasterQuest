@@ -5,16 +5,27 @@ ini_set('display_errors', '1');
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
+use EasterQuest\UserService;
+
+include "../db.php";
 
 $result = array(
   'url' => '',
-  'success' => false
+  'success' => false,
+  'reason' => ''
 );
 
 $data = json_decode(file_get_contents("php://input"), true);
 if (!isset($data['email'])) {
+  echo json_encode($result);
+  exit;
+}
+
+// check if email already exists
+$userService = new UserService($db);
+$exists = $userService->checkIfUserExists($data['email']);
+if ($exists == true) {
+  $result['reason'] = 'Account already exists';
   echo json_encode($result);
   exit;
 }

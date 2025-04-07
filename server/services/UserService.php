@@ -19,6 +19,21 @@ class UserService
         $this->rand = new \RandomLib\Factory;
     }
 
+    public function checkIfUserExists($email) {
+        $stmt = $this->db->prepare('SELECT id 
+            FROM users
+            WHERE email = :email');
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+    
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($result) {
+            return $result['id'] != null;
+        }
+        return false;
+    }
+
     public function getLoginState() {
         if ($this->auth->isLoggedIn()) {
             $userId = $this->auth->getUserId();
@@ -38,11 +53,7 @@ class UserService
         try {
             $userId = $this->auth->register($email, $password);
             if ($userId) {
-                $this->auth->login($email, $password);
-                $settings = $this->addUserSettings($userId, $paid);
-                $state = new LoggedInState(true, $userId, null);
-                $state->setSettings($settings);
-                return $state;
+                return $this->login($email, $password);
             }
         }
         catch (\Delight\Auth\InvalidEmailException $e) {
@@ -102,7 +113,8 @@ class UserService
     public function login($email, $password)
     {
         try {
-            $this->auth->login($email, $password);
+            $rememberDuration = (int) (60 * 60 * 24 * 30);
+            $this->auth->login($email, $password, $rememberDuration);
             $userId = $this->auth->getUserId();
             $state = new LoggedInState(true, $userId, null);
             $settings = $this->getUserSettings($userId);

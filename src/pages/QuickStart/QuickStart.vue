@@ -121,7 +121,8 @@ export default {
             try {
                 const selectedIds = [
                     0,
-                    ...this.selectedCategories
+                    ...this.selectedCategories, 
+                    999
                 ];
                 const mapped = this.getExamples.filter(x => selectedIds.indexOf(x.id) > -1);
                 for(let i = 0; i< mapped.length; i++) {

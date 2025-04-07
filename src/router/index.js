@@ -74,6 +74,12 @@ const routes = [
         component: LoginPage,
     },
     {
+        path: '/login',
+        redirect: () => {
+            return { path: '/log-in' }
+        }
+    },
+    {
         path: '/complete-purchase',
         name: 'ForceRegister',
         component: Register,

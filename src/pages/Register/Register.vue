@@ -28,7 +28,15 @@
                                 <label for="password" class="form-label">Password</label>
                                 <InputText type="password" id="password" v-model="password" class="form-control" required />
                             </div>
-                            <button type="submit" class="btn btn-primary">Register</button>
+
+                            <button type="submit"
+                                :disabled="loading"
+                                    class="btn btn-primary">
+                                        Register
+                                </button>
+                            <p v-if="errorMessage">
+                                {{  errorMessage  }}
+                            </p>
                         </form>
                     </div>
                 </div>
@@ -49,7 +57,9 @@ export default {
             source: 0,
             accessCode: '',
             email: '',
-            password: ''
+            password: '',
+            errorMessage: null,
+            loading: false,
         };
     },
     computed: {
@@ -65,6 +75,8 @@ export default {
         }),
         async registerUser() {
             try {
+                this.errorMessage = null;
+                this.loading = true;
                 const data = {
                     email: this.email,
                     password: this.password,
@@ -72,10 +84,21 @@ export default {
                     source: this.source
                 }
                 const response = await registerUser(data);
-                this.setLogin(response);
-                this.$router.push({ name: 'Dashboard' });
+                if (response.userId != null) {
+                    this.setLogin(response);
+                    this.$router.push({ name: 'Dashboard' });
+                } else {
+                    this.errorMessage = response.error;
+                    if (response.error == 'User already exists') {
+                        setTimeout(() => {
+                            this.$router.push({name: 'Login'});
+                        }, 1000);
+                    }
+                }
             } catch (error) {
                 console.error('Error registering user:', error);
+            } finally {
+                this.loading = false;
             }
         }
     }

@@ -31,7 +31,15 @@
                                 <label for="email" class="form-label hidden">Email Address</label>
                                 <InputText type="email" id="email" v-model="email" class="form-control" required placeholder="Email Address"/>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100">BUY NOW</button>
+                            <button 
+                                type="submit"
+                                :disabled="loading"
+                                class="btn btn-primary w-100">
+                                    BUY NOW
+                            </button>
+                            <p v-if="errorReason">
+                                {{ errorReason }}
+                            </p>
                         </form>
                     </Panel>
                 </div>
@@ -71,6 +79,7 @@ export default {
     name: 'HomeView',
     data() {
         return {
+            errorReason: null,
             logo,
             leavesLeft,
             leavesRight,
@@ -100,7 +109,7 @@ export default {
                 top: `calc(100vh - ${this.calculatedValue}vw)`,
             };
         },
-    },
+},
     async mounted() {
         window.addEventListener("scroll", this.handleScroll);
         getLoginState();
@@ -113,6 +122,7 @@ export default {
         async checkout() {
             try {
                 this.loading = true;
+                this.errorReason = null;
                 const data = {
                     email: this.email,
                     password: this.password,
@@ -121,7 +131,14 @@ export default {
                 if (response.success) {
                     window.location.href = response.url; // Redirect to the checkout page
                 } else {
+                    this.errorReason = response.reason;
+                    this.loading = false;
                     console.error('Checkout failed:', response.message);
+                    if (this.errorReason == 'Account already exists') {
+                        setTimeout(() => {
+                            this.$router.push({name: 'Login'});
+                        }, 1000);
+                    }
                 }
             } catch (error) {
                 this.loading = false;

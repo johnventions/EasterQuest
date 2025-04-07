@@ -7,7 +7,7 @@ $findIts = [
     "type" => 0,
     "suggested" => false,
     "bodyText" => "{name}
-The Easter Bunny needs your help to complete this Easter Scavenger hunt!
+The Easter Bunny needs your help to complete this Easter Scavenger hunt! 🐇
 Are you ready to HOP, RUN, and PLAY to find all of the clues?
 
 After you find each clue, click the 'I FOUND IT' button to move to the next challenge.
@@ -124,7 +124,17 @@ consectetur adipiscing elit.
 Proin sed pharetra justo. 
 Nulla vitae neque non est pretium mollis.
 "
-  ]
+  ],
+  [
+    "id" => 999,
+    "title" => 'Coongratulations!',
+    "type" => 0,
+    "suggested" => false,
+    "bodyText" => "{name}
+You've found all of the clues and completed Easter Quest 🐰 
+The Easter Bunny wishes you a Happy and Hoppy Easter ♥
+"
+  ],
 ];
 
 ?>
