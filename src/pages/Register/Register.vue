@@ -29,11 +29,12 @@
                                 <InputText type="password" id="password" v-model="password" class="form-control" required />
                             </div>
 
-                            <button type="submit"
+                            <Button type="submit"
+                                class="w-100"
                                 :disabled="loading"
-                                    class="btn btn-primary">
-                                        Register
-                                </button>
+                                :loading="loading"
+                                label="Register"
+                            />
                             <p v-if="errorMessage">
                                 {{  errorMessage  }}
                             </p>

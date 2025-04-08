@@ -133,6 +133,7 @@ export default {
                         bt = bt.replace('{name}', '');
                     }
                     mapped[i].bodyText = bt;
+                    mapped[i].itemOrder = i;
                 }
                 const quests = await createQuests(mapped);
                 this.setQuests(quests);

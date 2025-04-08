@@ -20,6 +20,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import 'primeicons/primeicons.css';
+
 body {
   min-height: 100vh;
   background: #5ec0c7;

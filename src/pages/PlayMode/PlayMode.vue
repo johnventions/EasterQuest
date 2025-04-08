@@ -21,6 +21,7 @@
             <chocolate-bunny v-if="activeQuest.templateId == 1001" />
             <egg-basket v-if="activeQuest.templateId == 1002" />
             <feed-the-bunny v-if="activeQuest.templateId == 1003" />
+            <paint-eggs v-if="activeQuest.templateId == 1004" />
         </div>
         <div class="container text-center mt-2">
             <Button asChild v-slot="slotProps" v-if="nextReady && (activeIndex + 1) < getMyQuests.length">
@@ -38,13 +39,16 @@ import logo from '@/assets/logo.png';
 import ChocolateBunnyVue from '@/components/Games/ChocolateBunny/ChocolateBunny.vue';
 import EggBasketVue from '@/components/Games/EggBasket/EggBasket.vue';
 import FeedTheBunnyGame from '@/components/Games/FeedTheBunny/FeedTheBunny.vue';
+import PaintEggs from '@/components/Games/PaintEggs/PaintEggs.vue';
+
 
 export default {
     name: 'PlayMode',
     components: {
         'chocolate-bunny': ChocolateBunnyVue,
         'egg-basket': EggBasketVue,
-        'feed-the-bunny': FeedTheBunnyGame
+        'feed-the-bunny': FeedTheBunnyGame,
+        'paint-eggs': PaintEggs
     },
     data() {
         return {

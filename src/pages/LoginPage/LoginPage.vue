@@ -24,7 +24,12 @@
                                 <label for="password" class="form-label">Password</label>
                                 <InputText type="password" id="password" v-model="password" class="form-control" required />
                             </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
+                            <Button
+                                :loading="loading"
+                                type="submit"
+                                label="Login"
+                                class="w-100"
+                            />
                         </form>
                     </div>
                 </div>
@@ -42,6 +47,7 @@ export default {
     data() {
         return {
             logo,
+            loading: false,
             email: '',
             password: ''
         };
@@ -58,11 +64,13 @@ export default {
                     email: this.email,
                     password: this.password,
                 }
+                this.loading = true;
                 const response = await loginUser(data);
                 this.setLogin(response);
                 this.$router.push({ name: 'Dashboard' });
             } catch (error) {
                 console.error('Error registering user:', error);
+                this.loading = false;
             }
         }
     }

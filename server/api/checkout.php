@@ -38,7 +38,7 @@ $checkout_session = \Stripe\Checkout\Session::create([
   'ui_mode' => 'hosted',
   'mode' => 'payment',
   'line_items' => [[
-    'price' => 'price_1R8vTiIY1FR3dPPOEwquaKax',
+    'price' => $_ENV['PRICE_ID'],
     'quantity' => 1,
   ]],
   'metadata' => [

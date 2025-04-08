@@ -16,11 +16,14 @@ const store = createStore({
         state.examples = examples;
       },
       SET_QUESTS(state, quests) {
-        state.myQuests = quests;
+        const ordered = quests.map((q, i) => ({
+          ...q,
+          displayOrder: i
+        }))
+        state.myQuests = ordered;
       },
       ADD_QUESTS(state, quests) {
         state.myQuests = [...state.myQuests, ...quests];
-
       },
       UPDATE_QUEST(state, quest) {
         const index = state.myQuests.findIndex(x => x.id == quest.id);

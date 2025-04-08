@@ -45,6 +45,7 @@
             </Button>
             <Button
                 v-if="type == 3"
+                :loading="loading"
                 class="d-block w-75 mb-2"
                 @click="saveQuest()"
             >
@@ -68,6 +69,7 @@
             </template>
             <Button
                 class="d-block w-75 mb-2"
+                :loading="loading"
                 @click="saveQuest()"
             >
                 SAVE
@@ -94,6 +96,7 @@ export default {
             localActive: false,
             quest: {},
             selectedTemplate: null,
+            loading: false,
         }
     },
     computed: {
@@ -137,6 +140,7 @@ export default {
         },
         async saveQuest() {
             try {
+                this.loading = true;
                 const questData = [{
                     ...this.quest,
                     type: this.type,
@@ -147,9 +151,11 @@ export default {
                     this.localActive = false;
                 } else {
                     console.error('Error creating quest:', response.statusText);
+                    this.loading = true;
                 }
             } catch (error) {
                 console.error('Error creating quest:', error);
+                this.loading = true;
             }
         }
     }

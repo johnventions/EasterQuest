@@ -96,7 +96,6 @@ class GameController {
         
         let dragTarget = null;
 
-
         app.stage.eventMode = 'static';
         app.stage.hitArea = app.screen;
         app.stage.on('pointerup', onDragEnd);
@@ -119,7 +118,7 @@ class GameController {
         const basketAsset = await Assets.load(basket);
         
         const basketTexture = Sprite.from(basketAsset);
-        basketTexture.width = app.screen.width * 0.75;
+        basketTexture.width = Math.min(app.screen.width * 0.75, 300);
         basketTexture.height = basketTexture.width * 0.75;
         basketTexture.x = app.screen.width / 2;
         basketTexture.y = app.screen.height - basketTexture.height / 2;

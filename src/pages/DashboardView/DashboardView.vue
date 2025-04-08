@@ -19,29 +19,41 @@
         v-model:visible="shareModalOpen" modal>
         <div>
           <Button asChild v-slot="slotProps">
-          <RouterLink to="/play/0" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
-            Click to Play Your Quest Now
-          </RouterLink>
-        </Button>
-        <hr/>
-        <p>
-          Or use the below URL to play your quest on another device.
-          <a href="shareUrl" target="_blank" class="d-block">
-            {{ shareUrl}}
-          </a>
-          <img :src="qrCodePath" alt="QR Code" class="qr-code" />
-        </p>
+            <RouterLink to="/play/0" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
+              Click to Play Your Quest Now
+            </RouterLink>
+          </Button>
+          <hr/>
+          <p>
+            Or use the below URL to play your quest on another device.
+            <a href="shareUrl" target="_blank" class="d-block">
+              {{ shareUrl}}
+            </a>
+            <img :src="qrCodePath" alt="QR Code" class="qr-code" />
+          </p>
         </div>
     </Dialog>
-    <div class="row"
-            v-for="(quest, i) in getMyQuests" 
-            :key="quest.id">
-            <div class="col-12 col-md-8 offset-md-2">
-              <quest-card
-                :quest="quest" :index="i" />
-            </div>
+    <TransitionGroup tag="div" name="fade" class="container">
+        <div class="row"
+          v-for="(quest, i) in getMyQuests" 
+          :key="quest.id">
+          <div class="col-1">
+            <Button icon="pi pi-arrow-circle-up"
+              @click="moveUp(i)"
+              size="small"
+              aria-label="Move Up" />
+            <Button icon="pi pi-arrow-circle-down"
+              @click="moveDown(i)"
+              size="small"
+              aria-label="Move Down" />
           </div>
-        <create-quest v-model:active="createMenuOpen" />
+          <div class="col-11 col-md-7 offset-md-2">
+            <quest-card
+              :quest="quest" :index="i" />
+          </div>
+        </div>
+    </TransitionGroup>
+    <create-quest v-model:active="createMenuOpen" />
   </div>
 </template>
 <script>
@@ -62,6 +74,9 @@ export default {
     },
     qrCodePath() {
       return `/api/qr-code/${this.getShareCode}`;
+    },
+    orderedQuests() {
+      return [...this.getMyQuests].sort((a, b) => a.displayOrder - b.displayOrder)
     }
   },
   data() {
@@ -70,5 +85,33 @@ export default {
       shareModalOpen: false
     }
   },
+  methods: {
+    moveUp(i) {
+      console.log(i);
+    },
+    moveDown(i) {
+      console.log(i);
+    }
+  }
 }
 </script>
+<style lang="scss" scoped>
+.fade-move,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+/* 2. declare enter from and leave to state */
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+  transform: scaleY(0.01) translate(30px, 0);
+}
+
+/* 3. ensure leaving items are taken out of layout flow so that moving
+      animations can be calculated correctly. */
+.fade-leave-active {
+  position: absolute;
+}
+</style>

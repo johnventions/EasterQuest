@@ -1,5 +1,21 @@
 <template>
     <div>
+        <Toast>
+            <template #message="slotProps">
+                <div class="flex flex-col items-start flex-auto">
+                    <div class="flex items-center gap-2">
+                        <h5>Welcome Back</h5>
+                    </div>
+                    <p>{{ slotProps.message.summary }}</p>
+                    <Button asChild v-slot="slotProps"  
+                    size="small">
+                        <RouterLink to="/dash" :class="slotProps.class">
+                        Let's go
+                        </RouterLink>
+                    </Button>
+                </div>
+            </template>
+        </Toast>
         <img :src="leavesLeft" class="leaves leaves-left"/>
         <img :src="leavesRight" class="leaves leaves-right"/>
         <div class="container eq-content">
@@ -15,7 +31,7 @@
                         The Easter Bunny already hides treats around your house, but this year, they're hiding them in a different way! 
                     </p>
                     <p class="lead mb-4">
-                        With Easter Quest, you and your kids can go on a digital scavenger hunt <strong><i>AND</i></strong> play fun games along the way.
+                        With Easter Quest, you and your kids can go on an unforgettable digital scavenger hunt <strong><i>AND</i></strong> play fun games along the way.
                     </p>
                 </div>
             </div>
@@ -31,12 +47,13 @@
                                 <label for="email" class="form-label hidden">Email Address</label>
                                 <InputText type="email" id="email" v-model="email" class="form-control" required placeholder="Email Address"/>
                             </div>
-                            <button 
+                            <Button 
                                 type="submit"
                                 :disabled="loading"
+                                :loading="loading"
+                                label="BUY NOW"
                                 class="btn btn-primary w-100">
-                                    BUY NOW
-                            </button>
+                            </Button>
                             <p v-if="errorReason">
                                 {{ errorReason }}
                             </p>
@@ -112,13 +129,21 @@ export default {
 },
     async mounted() {
         window.addEventListener("scroll", this.handleScroll);
-        getLoginState();
+        this.checkLogin();
     },
         
     beforeUnmount() {
         window.removeEventListener("scroll", this.handleScroll);
     },
     methods: {
+        async checkLogin() {
+            const state = await getLoginState();
+            if (state.isLoggedIn) {
+                this.$toast.add({ 
+                        severity: 'success', 
+                        summary: 'Continue building your Easter Quest' });
+            }
+        },
         async checkout() {
             try {
                 this.loading = true;
@@ -158,7 +183,6 @@ export default {
                 const progress = (scrollTop - startScroll) / (maxScroll - startScroll);
                 this.calculatedValue = 42 * (1 - progress);
             }
-            console.log(this.calculatedValue);
         }
     },
 }

@@ -31,15 +31,16 @@ class QuestService
         // Dynamically build the query with placeholders
         foreach ($quests as $index => $row) {
             $templateId = isset($row['id']) ? $row['id'] : 0;
-            $order = isset($row['order']) ? $row['order'] : 999;
+            $order = isset($row['itemOrder']) ? $row['itemOrder'] : 999;
 
-            $values[] = "(:userId_{$index}, :type_{$index}, :templateId_{$index}, :title_{$index}, :bodyText_{$index})";
+            $values[] = "(:userId_{$index}, :type_{$index}, :templateId_{$index}, :title_{$index}, :bodyText_{$index}, :itemOrder_{$index})";
 
             $params["userId_{$index}"] = $userId;
             $params["type_{$index}"] = $row['type'];
             $params["templateId_{$index}"] = $templateId;
             $params["title_{$index}"] = $row['title'];
             $params["bodyText_{$index}"] = $row['bodyText'];
+            $params["itemOrder_{$index}"] = $order;
         }
 
         // Combine the base query with the dynamically generated values
@@ -70,7 +71,10 @@ class QuestService
     public function getQuests($userId)
     {
         $stmt = $this->db->prepare('
-            SELECT * FROM quests WHERE userId = :userId
+            SELECT * 
+            FROM quests 
+            WHERE userId = :userId
+            ORDER BY itemOrder ASC, id ASC
         ');
 
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
@@ -141,6 +145,7 @@ class QuestService
             JOIN user_settings us ON q.userId = us.userId
             WHERE us.userId = :userId
                 AND us.shareId = :shareId
+            ORDER BY q.itemOrder ASC, q.id ASC
         ');
 
         $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);

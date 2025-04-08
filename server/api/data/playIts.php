@@ -31,5 +31,13 @@ $playIts = [ [
     "type" => 3,
     "suggested" => false,
     "bodyText" => "Pull the carrots and feed them to the bunny",
+  ],
+  [
+    "id" => 1004,
+    "gameId" => 1004,
+    "title" => 'Paint The Eggs',
+    "type" => 3,
+    "suggested" => false,
+    "bodyText" => "Paint the Easter Eggs",
   ]
 ];
