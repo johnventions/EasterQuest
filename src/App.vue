@@ -68,4 +68,9 @@ h1, h2, h3, h4, h5, h6 {
     height:1px;
     overflow:hidden;
 }
+
+.p-toast, .p-dialog {
+  max-width: calc(100vw - 40px);
+}
+
 </style>

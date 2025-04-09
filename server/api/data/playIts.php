@@ -6,7 +6,8 @@ $playIts = [ [
   "title" => 'Game Break',
   "type" => 3,
   "suggested" => false,
-  "bodyText" => "Game break! Edit to choose a specific game (optional)",
+  "bodyText" => "Game break!
+Edit to choose a specific game (optional)",
   ],
   [
     "id" => 1001,

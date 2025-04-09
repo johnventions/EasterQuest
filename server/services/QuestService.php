@@ -15,16 +15,19 @@ class QuestService
 
     public function createQuests($userId, $quests)
     {
-        $stmt = $this->db->prepare('SELECT MAX(id) as maxId FROM quests WHERE userId = :userId');
+        $stmt = $this->db->prepare('SELECT
+            MAX(id) as maxId
+            FROM quests WHERE userId = :userId');
         $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
         $stmt->execute();
         
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
-        $maxId = $result['maxId'] ?? null;
+        $maxId = $result['maxId'] ?? 0;
 
         $this->db->beginTransaction();
 
-        $sql = 'INSERT INTO quests (userId, type, templateId, title, bodyText) VALUES ';
+        $sql = 'INSERT INTO quests 
+        (userId, type, templateId, title, bodyText, itemOrder) VALUES ';
         $values = [];
         $params = [];
 
@@ -104,7 +107,9 @@ class QuestService
         $this->db->beginTransaction();
 
         $stmt = $this->db->prepare("UPDATE quests
-        SET bodyText = :bodyText
+        SET bodyText = :bodyText, 
+            title = :title,
+            templateId = :templateId
         WHERE 
             userId = :userId
             AND id = :id 
@@ -114,11 +119,61 @@ class QuestService
         $stmt->bindParam(':userId', $userId,  PDO::PARAM_INT);
         $stmt->bindParam(':id', $questId, PDO::PARAM_INT);
         $stmt->bindParam(':bodyText', $quest['bodyText'], PDO::PARAM_STR);
+        $stmt->bindParam(':title', $quest['title'], PDO::PARAM_STR);
+        $stmt->bindParam(':templateId', $quest['templateId'], PDO::PARAM_INT);
 
         $stmt->execute();
 
         // Commit transaction
         $this->db->commit();
+    }
+
+    public function udpateQuestOrder(int $userId, array $data): bool
+    {
+        if (empty($data)) {
+            return false;
+        }
+    
+        // Build CASE statement for itemOrder
+        $caseStatements = [];
+        $ids = [];
+        $params = [':userId' => $userId ];
+    
+        foreach ($data as $index => $quest) {
+            $idParam = ":id{$index}";
+            $orderParam = ":order{$index}";
+    
+            $caseStatements[] = "WHEN id = {$idParam} THEN {$orderParam}";
+            $params[$idParam] = $quest['id'];
+            $params[$orderParam] = $quest['itemOrder'];
+        }
+    
+        $caseSql = implode("\n", $caseStatements);
+    
+        $sql = "
+            UPDATE quests
+            SET itemOrder = CASE 
+                {$caseSql}
+                ELSE itemOrder
+            END
+            WHERE userId = :userId
+        ";
+    
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+            }
+            $stmt->execute();
+            $this->db->commit();
+            return true;
+        } catch (\PDOException $e) {
+            $this->db->rollBack();
+            echo $e->getMessage();
+            error_log("Quest update failed: " . $e->getMessage());
+            return false;
+        }
     }
 
     public function deleteQuestById($userId, $questId)

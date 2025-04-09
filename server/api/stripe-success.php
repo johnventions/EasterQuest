@@ -44,7 +44,7 @@ try {
         $result = $userService->register($email, $_ENV['DEFAULT_PASS'], true);
         $result = $userService->login($email, $_ENV['DEFAULT_PASS']);
 
-        Header('Location: /dash?session_id=' . urlencode($session_id));
+        Header('Location: /setup?purchase=true&session_id=' . urlencode($session_id));
         exit();
     } else {
         // Handle other statuses

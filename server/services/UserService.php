@@ -133,4 +133,18 @@ class UserService
             return new LoggedInState(false, null, 'Too many requests');
         }
     }
+
+    public function logout() {
+        $this->auth->logOut();
+    }
+
+    public function setPassword($password) {
+        try {
+            $this->auth->changePasswordWithoutOldPassword($password);
+            return true;
+        }
+        catch (\Delight\Auth\InvalidPasswordException $e) {
+            return false;
+        }
+    }
 }

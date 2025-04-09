@@ -1,5 +1,34 @@
 
-import { createStore } from 'vuex'
+import { createStore } from 'vuex';
+import { updateQuestOrder } from '@/services/api.service';
+
+const changeListOrder = (quests, i, offset) => {
+  const j = i + offset;
+  const copy = quests.map(q => ({ ...q }));
+  // Check if the indices are within bounds
+  if (i < 0 || j < 0 || i >= quests.length || j >= quests.length) {
+    console.warn("Invalid index or offset");
+    return;
+  }
+
+  // Swap displayOrder values
+  const temp = copy[i].displayOrder;
+  copy[i].displayOrder = copy[j].displayOrder;
+  copy[j].displayOrder = temp;
+  copy.sort((a, b) => a.displayOrder - b.displayOrder);
+  console.log(copy);
+  let changes = [];
+  for (let k = 0; k < copy.length; k++) {
+    if (copy[k].itemOrder != k) {
+      copy[k].itemOrder = k;
+      changes.push({ id: copy[k].id, itemOrder: k })
+    }
+  }
+  return {
+    quests: copy,
+    changes
+  }
+}
 
 const store = createStore({
     state () {
@@ -16,11 +45,7 @@ const store = createStore({
         state.examples = examples;
       },
       SET_QUESTS(state, quests) {
-        const ordered = quests.map((q, i) => ({
-          ...q,
-          displayOrder: i
-        }))
-        state.myQuests = ordered;
+        state.myQuests = quests;
       },
       ADD_QUESTS(state, quests) {
         state.myQuests = [...state.myQuests, ...quests];
@@ -38,6 +63,15 @@ const store = createStore({
         state.userId = loginState.userId;
         state.shareCode = loginState.shareId;
       },
+    },
+    actions: {
+      async swapOrder({ commit, state}, { index, offset }) {
+        const { quests, changes } = changeListOrder(state.myQuests, index, offset);
+        console.log(changes);
+        commit('SET_QUESTS', quests);
+        const result = await updateQuestOrder(changes);
+        console.log(result);
+      }
     },
     getters: {
       getExamples: (state) => state.examples ?? [],

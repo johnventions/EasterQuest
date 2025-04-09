@@ -1,5 +1,6 @@
 <template>
     <div class="p-4">
+        <payment-thank-you v-model:active="showPaymentModal"/>
         <div v-if="step == 1">
             <h1>Lets Get Started</h1>
             <p>
@@ -68,12 +69,17 @@
 <script>
 import { createQuests } from '@/services/api.service';
 import { mapGetters, mapMutations } from 'vuex';
+import PaymentThankYouModalVue from '@/components/PaymentThankYouModal.vue';
 
 export default {
     name: 'QuickStart',
+    components: {
+        'payment-thank-you': PaymentThankYouModalVue
+    },
     data () {
         return {
             step: 1,
+            showPaymentModal: false,
             selectedCategories: null,
             personalize: true,
             childName: null,
@@ -81,6 +87,7 @@ export default {
         }
     },
     mounted() {
+        this.showPaymentModal = this.$route.query.purchase ?? false;
         const selectedCount = (this.selectedCategories?.length ?? 0);
         if (this.$route.name != 'Setup' &&  selectedCount == 0) {
             this.$router.push({name: 'Setup'});
@@ -97,7 +104,7 @@ export default {
         ...mapGetters(['getExamples']),
         quickStartExamples() {
             return this.getExamples.filter(x => x.suggested);
-        }
+        },
     },
     methods: {
         ...mapMutations({
@@ -125,17 +132,30 @@ export default {
                     999
                 ];
                 const mapped = this.getExamples.filter(x => selectedIds.indexOf(x.id) > -1);
+                const randomGame = this.getExamples.find(x => x.id == 1000);
+                let currentIndex = 0;
+                let finalQuests = [];
                 for(let i = 0; i< mapped.length; i++) {
                     let bt = mapped[i].bodyText ?? '';
+                    const templateId = mapped[i].id;
                     if (this.personalize) {
                         bt = bt.replace('{name}', this.childName);
                     } else {
                         bt = bt.replace('{name}', '');
                     }
                     mapped[i].bodyText = bt;
-                    mapped[i].itemOrder = i;
+                    mapped[i].itemOrder = templateId == 999 ? 999 : currentIndex;
+                    currentIndex++;
+                    finalQuests.push({...mapped[i]});
+                    if (this.addGames && mapped[i].type != 0 && randomGame != null) {
+                        // add random game
+                        finalQuests.push({
+                            ... randomGame, 
+                            itemOrder: currentIndex
+                        }); 
+                    }
                 }
-                const quests = await createQuests(mapped);
+                const quests = await createQuests(finalQuests);
                 this.setQuests(quests);
                 setTimeout(() => {
                     this.$router.push({ name: 'Dashboard'});

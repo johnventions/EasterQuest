@@ -35,32 +35,44 @@
     </Dialog>
     <TransitionGroup tag="div" name="fade" class="container">
         <div class="row"
-          v-for="(quest, i) in getMyQuests" 
+          v-for="(quest, i) in orderedQuests" 
           :key="quest.id">
-          <div class="col-1">
+          <div class="col-1 offset-md-2 gap-4 d-flex flex-column justify-content-center">
             <Button icon="pi pi-arrow-circle-up"
+              v-if="quest.type != 0"
               @click="moveUp(i)"
+              :disabled="quest.itemOrder < 2"
               size="small"
               aria-label="Move Up" />
             <Button icon="pi pi-arrow-circle-down"
+              v-if="quest.type != 0"
+              :disabled="quest.type == 0 || (i + 2 == orderedQuests.length)"
               @click="moveDown(i)"
               size="small"
               aria-label="Move Down" />
           </div>
-          <div class="col-11 col-md-7 offset-md-2">
+          <div class="col-11 col-md-7">
             <quest-card
               :quest="quest" :index="i" />
           </div>
         </div>
     </TransitionGroup>
     <create-quest v-model:active="createMenuOpen" />
+    <div class="mt-5 d-flex justify-content-center">
+      <Button 
+          class="mt-4 w-50 d-block" 
+          size="small"
+          @click="logout">
+          Log Out
+          </Button>
+    </div>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import CreateQuest from '../../components/CreateQuest.vue';
 import QuestCard from './components/QuestCard.vue';
-
+import { logOut } from '@/services/api.service';
 export default {
   name: 'DashboardView',
   components: {
@@ -86,11 +98,18 @@ export default {
     }
   },
   methods: {
-    moveUp(i) {
-      console.log(i);
+    ...mapActions(['swapOrder']),
+    moveUp(index) {
+      console.log(index);
+      this.swapOrder({ index, offset: -1 });
     },
-    moveDown(i) {
-      console.log(i);
+    moveDown(index) {
+      console.log(index);
+      this.swapOrder({ index, offset: 1 });
+    },
+    async logout() {
+      await logOut();
+      this.$router.push({name: 'Login'})
     }
   }
 }

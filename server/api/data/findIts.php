@@ -127,7 +127,7 @@ Nulla vitae neque non est pretium mollis.
   ],
   [
     "id" => 999,
-    "title" => 'Coongratulations!',
+    "title" => 'Congratulations!',
     "type" => 0,
     "suggested" => false,
     "bodyText" => "{name}

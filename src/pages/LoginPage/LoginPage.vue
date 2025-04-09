@@ -30,6 +30,9 @@
                                 label="Login"
                                 class="w-100"
                             />
+                            <div v-if="errorMsg">
+                                {{ errorMsg }}
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -49,7 +52,8 @@ export default {
             logo,
             loading: false,
             email: '',
-            password: ''
+            password: '',
+            errorMsg: null,
         };
     },
     mounted() {
@@ -65,9 +69,15 @@ export default {
                     password: this.password,
                 }
                 this.loading = true;
+                this.errorMsg = null;
                 const response = await loginUser(data);
-                this.setLogin(response);
-                this.$router.push({ name: 'Dashboard' });
+                if (response.isLoggedIn) {
+                    this.setLogin(response);
+                    this.$router.push({ name: 'Dashboard' });
+                } else {
+                    this.errorMsg = response.error;
+                    this.loading = false;
+                }
             } catch (error) {
                 console.error('Error registering user:', error);
                 this.loading = false;

@@ -3,13 +3,16 @@ RewriteRule ^api/examples api/examples.php    [NC,L]
 
 RewriteRule ^stripe/success api/stripe-success.php    [NC,L]
 RewriteRule ^api/qr-code/([0-9a-zA-Z_-]+)$ api/qr-code.php?id=$1 [NC,L]
+RewriteRule ^api/tasks/order$ api/taskOrder.php?id=$1 [NC,L]
 RewriteRule ^api/tasks/([0-9a-zA-Z_-]+)$ api/taskById.php?id=$1 [NC,L]
 RewriteRule ^api/tasks api/tasks.php    [NC,L]
 RewriteRule ^api/shared/([0-9a-zA-Z_-]+)$ api/sharedTasks.php?id=$1 [NC,L]
 RewriteRule ^api/login-state api/check-auth.php    [NC,L]
 RewriteRule ^api/login api/login.php    [NC,L]
+RewriteRule ^api/logout api/logout.php    [NC,L]
 RewriteRule ^api/sign-up api/force-register.php    [NC,L]
 RewriteRule ^api/checkout api/checkout.php    [NC,L]
+RewriteRule ^api/password api/set-password.php    [NC,L]
 
 # Allow direct access to existing files (CSS, JS, images, fonts, etc.)
 RewriteCond %{REQUEST_FILENAME} -f

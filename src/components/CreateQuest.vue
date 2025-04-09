@@ -100,9 +100,13 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['getExamples']),
+        ...mapGetters(['getExamples', 'getMyQuests']),
         allowedForType() {
             return this.getExamples.filter(x => x.type == this.type);
+        },
+        maxQuestOrder() {
+            const f = this.getMyQuests.filter(x => x.type != 0).map(x => x.itemOrder);
+            return f.length ? Math.max(...f) + 1 : 1;
         }
     },
     watch: {
@@ -144,6 +148,7 @@ export default {
                 const questData = [{
                     ...this.quest,
                     type: this.type,
+                    itemOrder: this.maxQuestOrder
                 }];
                 const response = await createQuests(questData);
                 if (response != null) {

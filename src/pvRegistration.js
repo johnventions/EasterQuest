@@ -12,6 +12,7 @@ import Panel from 'primevue/panel';
 import Select from 'primevue/select';
 import Timeline from 'primevue/timeline';
 import Toast from 'primevue/toast';
+import Password from 'primevue/password';
 
 const registerPrimeVue = (app) => {
     app.use(PrimeVue, {
@@ -25,6 +26,7 @@ const registerPrimeVue = (app) => {
     app.component('Dialog', Dialog);
     app.component('Textarea', Textarea);
     app.component('InputText', InputText);
+    app.component('Password', Password);
     app.component('Checkbox', Checkbox);
     app.component('ToggleSwitch', ToggleSwitch);
     app.component('Panel', Panel);

@@ -2,10 +2,8 @@
     <div>
         <Toast>
             <template #message="slotProps">
-                <div class="flex flex-col items-start flex-auto">
-                    <div class="flex items-center gap-2">
-                        <h5>Welcome Back</h5>
-                    </div>
+                <div>
+                    <h5>Welcome Back</h5>
                     <p>{{ slotProps.message.summary }}</p>
                     <Button asChild v-slot="slotProps"  
                     size="small">
@@ -33,7 +31,12 @@
                     <p class="lead mb-4">
                         With Easter Quest, you and your kids can go on an unforgettable digital scavenger hunt <strong><i>AND</i></strong> play fun games along the way.
                     </p>
+                    
+                <p>
+                    Already have an account? <router-link to="log-in">Log In</router-link>
+                </p>
                 </div>
+                
             </div>
             <div class="row justify-content-center">
                 <div class="col-12 col-md-6 mb-4">

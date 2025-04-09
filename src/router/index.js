@@ -15,7 +15,7 @@ const getQuestsCount = async () => {
     if (store.state.myQuests == null) {
         // we have never looked up the quests
         const quests = await getQuests();
-        const questList = quests.data ?? [];
+        const questList = quests ?? [];
         store.commit('SET_QUESTS', questList);
         return questList.length;
     }
@@ -42,7 +42,7 @@ const loadSharedQuests = async (to) => {
     console.log(to.params);
     if ((store.state.myQuests ?? []).length == 0) {
         const questList = await getSharedQuests(to.params.shareId);
-        store.commit('SET_QUESTS', questList.data);
+        store.commit('SET_QUESTS', questList ?? []);
     }
 }
 

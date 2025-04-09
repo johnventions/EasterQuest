@@ -2,24 +2,32 @@
     <Panel class="w-100 mb-2">
         <template #header>
             <div class="d-flex">
-                <template v-if="!editMode">
+                <InputText v-if="editMode && quest?.type == 1" v-model="titleEdit" />
+                <template v-else>
                     <h4>
                     <template v-if="index">
                         #{{index}}&nbsp;-
                     </template>{{ quest.title }}
                     </h4>
                 </template>
-                
             </div>
         </template>
-        <p class="m-0" v-if="!editMode">
-            {{ quest.bodyText }}
-        </p>
-        <Textarea 
-            v-if="editMode"
+        <Textarea
+            v-if="editMode && quest?.type < 2"
             class="w-100"
             rows="5"
             v-model="bodyTextEdit" />
+        <Select
+            v-if="editMode && quest?.type > 1"
+            class="w-100"
+            :options="examplesBytype"
+            @change="handleTemplateSelect"
+            option-label="title"
+            option-value="id"
+            v-model="templateIdEdit" />
+        <p class="m-0" v-if="!editMode">
+            {{ quest.bodyText }}
+        </p>
         <template #footer>
             <div class="d-flex justify-content-between">
                 <div>
@@ -46,7 +54,11 @@
                         >
                         Cancel
                     </Button>
-                    <Button severity="danger" text @click="deleteQuest">
+                    <Button
+                        v-if="quest.type != 0"
+                        severity="danger" 
+                        text 
+                        @click="deleteQuest">
                         Delete
                     </Button>
                 </div>
@@ -56,7 +68,7 @@
 </template>
 <script>
 import { updateQuest, deleteQuest } from '@/services/api.service';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
     name: 'QuestCard',
@@ -70,15 +82,23 @@ export default {
             default: 0,
         }
     },
+    computed: {
+        ...mapGetters(['getExamples']),
+        examplesBytype() {
+            return this.getExamples.filter(x => x.type == this.quest.type);
+        }
+    },
     data() {
         return {
             editMode: false,
             loading: false,
-            bodyTextEdit: ''
+            bodyTextEdit: '',
+            titleEdit: '',
+            templateIdEdit: 0,
         }
     },
     mounted() {
-        this.bodyTextEdit = this.quest.bodyText;
+        this.resetEdits();
     },
     methods: {
         ...mapMutations({
@@ -86,14 +106,29 @@ export default {
             'deleteQuestById': 'DELETE_QUEST',
 
         }),
-        cancel() {
+        handleTemplateSelect() {
+            const selected = this.getExamples.find(x => x.id == this.templateIdEdit);
+            if (selected) {
+                this.bodyTextEdit = selected.bodyText;
+                this.titleEdit = selected.title;
+                this.templateIdEdit = selected.id
+            }
+        },
+        resetEdits() {
             this.editMode = false;
             this.bodyTextEdit = this.quest.bodyText;
+            this.titleEdit = this.quest.title;
+            this.templateIdEdit = this.quest.templateId;
+        },
+        cancel() {
+            this.resetEdits();
         },
         async save() {
             this.loading == true;
             const result = await updateQuest(this.quest.id, {
-                bodyText: this.bodyTextEdit
+                bodyText: this.bodyTextEdit,
+                title: this.titleEdit,
+                templateId: this.templateIdEdit,
             });
             this.updateQuestList(result);
             this.editMode = false;
