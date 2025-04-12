@@ -1,11 +1,13 @@
 /* eslint-disable no-unused-vars */
 import dirt from '@/assets/games/dirt.jpg';
-import carrot from '@/assets/games/carrot_top.png';
-import fullCarrot from '@/assets/games/carrot.png';
-import bunny from '@/assets/games/bunny_right.png';
-import heart from '@/assets/games/heart.png';
+import carrotImg from '@/assets/games/carrot_top.png';
+import fullCarrotImg from '@/assets/games/carrot.png';
+import bunnyImg from '@/assets/games/bunny_right.png';
+import heartImg from '@/assets/games/heart.png';
 
-import { Application, Assets, Sprite, Graphics, Circle } from 'pixi.js';
+import { loadAssets } from '../loader';
+
+import { Application, Assets, Sprite, Graphics } from 'pixi.js';
 
 const rectsIntersect = (a, b) => {
     return a.x + a.width > b.x &&
@@ -32,8 +34,18 @@ class GameController {
     }
 
     async init() {
+        const assetsToLoad = [
+            { alias: 'fb_dirt', src: dirt },
+            { alias: 'fb_carrot', src: carrotImg },
+            { alias: 'fb_fullCarrot', src: fullCarrotImg },
+            { alias: 'fb_heart', src: heartImg },
+            { alias: 'fb_bunny', src: bunnyImg },
+            ];
+
+        await loadAssets(this.app, assetsToLoad, 'crackEgg');
+        
         const app = this.app;
-        await this.loaddirt(this.app);
+        this.loaddirt(this.app);
         //  const dropZone = await this.loadDropzone(this.app, basket);
 
         let handleY = 999;
@@ -44,9 +56,9 @@ class GameController {
             app.stage.on('pointermove', onDragMove);
         }
 
-        const [bunny, bunnyHeart] = await this.loadBunny(this.app);
-        const [carrot, hole] = await this.loadCarrot(this.app);
-        const fullCarrot = await this.loadFullCarrot(this.app, carrot);
+        const [bunny, bunnyHeart] = this.loadBunny(this.app);
+        const [carrot, hole] = this.loadCarrot(this.app);
+        const fullCarrot = this.loadFullCarrot(this.app, carrot);
         const dropZone = this.loadDropzone(this.app, bunny);
         let origHeight = carrot.height;
         carrot.on('pointerdown', onStretchStart);
@@ -57,7 +69,7 @@ class GameController {
                 const progressRatio = (handleY - event.global.y) / handleY;
                 const stretchHeight = origHeight * (1 + progressRatio);
                 carrot.height = stretchHeight;
-                if (progressRatio > 0.7) {
+                if (progressRatio > 0.5) {
                     carrot.height = origHeight;
                     carrot.visible = false;
                     pullTarget = fullCarrot;
@@ -72,28 +84,31 @@ class GameController {
         const onDragEnd = () => {
             if (pullTarget) {
                 app.stage.off('pointermove', onDragMove);
-                carrot.visible = true;
-                carrot.height = origHeight;
 
                 if (pullTarget == fullCarrot) {
+                    setTimeout(() => {
+                        carrot.visible = true;
+                        carrot.height = origHeight;
+                        hole.visible = false;
+                    }, 1200);
                     const dragBounds = pullTarget.getBounds();
                     const dropBounds = dropZone.getBounds();
     
                     if (rectsIntersect(dragBounds, dropBounds)) {
-                        console.log('Points!');
                         bunnyHeart.visible = true;
                         setTimeout(() => {
                             bunnyHeart.visible = false;
                         }, 1000);
-                    } else {
-                        console.log('No Points');
                     }
+                } else {
+                    carrot.visible = true;
+                    carrot.height = origHeight;
+                    hole.visible = false;
                 }
 
                 pullTarget = null;
-            }
+            } 
             fullCarrot.visible = false;
-            hole.visible = false;
         }
         
         let pullTarget = null;
@@ -104,8 +119,8 @@ class GameController {
         app.stage.on('pointerup', onDragEnd);
     }
 
-    async loaddirt(app) {
-        const dirtBg = await Assets.load(dirt);
+    loaddirt(app) {
+        const dirtBg = Assets.get('fb_dirt');
         
         const dirtTexture = Sprite.from(dirtBg);
         dirtTexture.width = app.screen.width;
@@ -116,8 +131,8 @@ class GameController {
         app.stage.addChild(dirtTexture);
     }
 
-    async loadCarrot(app) {
-        const carrotGraphic = await Assets.load(carrot);
+    loadCarrot(app) {
+        const carrotGraphic = Assets.get('fb_carrot');
         const carrotTexture = Sprite.from(carrotGraphic);
         carrotTexture.width = Math.min(app.screen.width / 3, 200);
         carrotTexture.height = carrotTexture.width * 1.75;
@@ -138,8 +153,8 @@ class GameController {
         return [carrotTexture, hole];
     }
 
-    async loadFullCarrot(app, carrot) {
-        const carrotGraphic = await Assets.load(fullCarrot);
+    loadFullCarrot(app, carrot) {
+        const carrotGraphic = Assets.get('fb_fullCarrot');
         const carrotTexture = Sprite.from(carrotGraphic);
         carrotTexture.width = carrot.width;
         carrotTexture.height = carrot.width * 1.75;
@@ -152,8 +167,8 @@ class GameController {
         return carrotTexture;
     }
 
-    async loadBunny(app) {
-        const bunnyGraphic = await Assets.load(bunny);
+    loadBunny(app) {
+        const bunnyGraphic = Assets.get('fb_bunny');
         const bunnyTexture = Sprite.from(bunnyGraphic);
         bunnyTexture.width = Math.min(app.screen.width / 2, 250);
         bunnyTexture.height = bunnyTexture.width * 1.75;
@@ -164,7 +179,7 @@ class GameController {
         app.stage.addChild(bunnyTexture);
 
         
-        const heartGraphic = await Assets.load(heart);
+        const heartGraphic = Assets.get('fb_heart');
         const heartTexture = Sprite.from(heartGraphic);
         heartTexture.width = bunnyTexture.width / 6.5;
         heartTexture.height = heartTexture.width;

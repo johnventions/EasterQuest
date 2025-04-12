@@ -82,6 +82,40 @@
                     </p>
                 </div>
             </div>
+            <div class="text-center row justify-content-center">
+                <div class="col-12 col-md-6 text-center">
+                    <h2>Try it today! 🐰</h2>
+                    <p>
+                        Want to see what Easter Quest is like? Try playing a short demo below
+                    </p>
+                    <Button asChild v-slot="slotProps">
+                        <a href="https://easterquest.com/share/2-eggs2025"
+                            target="_blank"
+                                :class="slotProps.class" class="d-block w-100 w-md-50 mb-2 text-center">
+                            Play Demo
+                        </a>
+                    </Button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-3 carousel mb-5">
+                    <Carousel :value="carouselItems" 
+                        :numVisible="2" 
+                        :numScroll="1"
+                        :autoplayInterval="3000"
+                        :circular="true">
+                        <template #item="slotProps">
+                            <div class="border rounded m-2 p-4">
+                                <div class="mb-4">
+                                    <div class="relative mx-auto">
+                                        <img :src="slotProps.data.image" :alt="slotProps.data.name" class="w-full rounded" />
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </Carousel>
+                </div>
+            </div>
         </div>
         <img :src="grass" class="grass d-block d-md-none" 
             :style="grassStyle"
@@ -94,6 +128,11 @@ import leavesLeft from '@/assets/accents/leaves_left.png';
 import leavesRight from '@/assets/accents/leaves_right.png';
 import grass from '@/assets/accents/grass.png';
 import { checkout, getLoginState } from '@/services/api.service';
+
+import demo1 from '@/assets/demo/demo1.png';
+import demo2 from '@/assets/demo/demo2.png';
+import demo3 from '@/assets/demo/demo3.png';
+import demo4 from '@/assets/demo/demo4.png';
 
 export default {
     name: 'HomeView',
@@ -116,6 +155,34 @@ export default {
                 },
                 {
                     status: 'Click the PLAY button and join the fun with your kids.'
+                }
+            ],
+            carouselItems: [
+                { image: demo1, name: '' },
+                { image: demo2, name: '' },
+                { image: demo3, name: '' },
+                { image: demo4, name: '' }
+            ],
+            responsiveOptions: [
+                {
+                    breakpoint: '1400px',
+                    numVisible: 2,
+                    numScroll: 1
+                },
+                {
+                    breakpoint: '1199px',
+                    numVisible: 3,
+                    numScroll: 1
+                },
+                {
+                    breakpoint: '767px',
+                    numVisible: 2,
+                    numScroll: 1
+                },
+                {
+                    breakpoint: '575px',
+                    numVisible: 2,
+                    numScroll: 1
                 }
             ]
         }
@@ -165,7 +232,7 @@ export default {
                     if (this.errorReason == 'Account already exists') {
                         setTimeout(() => {
                             this.$router.push({name: 'Login'});
-                        }, 1000);
+                        }, 1200);
                     }
                 }
             } catch (error) {
@@ -232,6 +299,12 @@ export default {
 
     &.grass-static {
         position: relative;
+    }
+}
+
+.carousel {
+    img {
+        max-height: 300px;
     }
 }
 </style>

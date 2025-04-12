@@ -26,8 +26,8 @@
           <hr/>
           <p>
             Or use the below URL to play your quest on another device.
-            <a href="shareUrl" target="_blank" class="d-block">
-              {{ shareUrl}}
+            <a :href="shareUrl" target="_blank" class="d-block">
+              {{ shareUrl }}
             </a>
             <img :src="qrCodePath" alt="QR Code" class="qr-code" />
           </p>

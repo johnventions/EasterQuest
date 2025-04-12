@@ -35,7 +35,7 @@
 import { updatePassword } from '@/services/api.service';
 
 export default {
-    name: 'CreateQuest',
+    name: 'PaymentThankYou',
     props: {
         active: {
             type: Boolean,

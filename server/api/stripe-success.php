@@ -1,15 +1,13 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ .'/../');
 $dotenv->load();
 
-
 use EasterQuest\UserService;
+use EasterQuest\EmailService;
+
 include "../db.php";
 
 // Get the session ID from the URL
@@ -24,6 +22,8 @@ if (!$session_id) {
 
 // Retrieve the checkout session from Stripe
 try {
+    $emailSuccess = true;
+
     $session = \Stripe\Checkout\Session::retrieve($session_id);
     
     // Optional: Retrieve payment details
@@ -44,7 +44,15 @@ try {
         $result = $userService->register($email, $_ENV['DEFAULT_PASS'], true);
         $result = $userService->login($email, $_ENV['DEFAULT_PASS']);
 
-        Header('Location: /setup?purchase=true&session_id=' . urlencode($session_id));
+        try {
+            $emailService = new EmailService();
+            $emailBody = file_get_contents(__DIR__ . '/welcomeEmail.html');
+            $emailSuccess = $emailService->sendMail($data['email'], "Welcome to Easter Quest!");
+        } catch(Exception $e)  {
+            $emailSuccess = false;
+        }
+
+        Header('Location: /setup?purchase=true&session_id=' . urlencode($session_id) . '&emailSuccess=' . $emailSuccess);
         exit();
     } else {
         // Handle other statuses

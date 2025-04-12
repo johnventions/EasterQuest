@@ -40,5 +40,13 @@ Edit to choose a specific game (optional)",
     "type" => 3,
     "suggested" => false,
     "bodyText" => "Paint the Easter Eggs",
-  ]
+  ],
+  [
+    "id" => 1005,
+    "gameId" => 1005,
+    "title" => 'Crack The Egg',
+    "type" => 3,
+    "suggested" => false,
+    "bodyText" => "Crack the egg open to reveal a surprise",
+  ],
 ];

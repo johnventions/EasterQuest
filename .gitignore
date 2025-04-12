@@ -24,3 +24,4 @@ pnpm-debug.log*
 server/secrets.php
 server/.env
 server/.env.prod
+server-prod/.env

@@ -1,34 +1,63 @@
 <template>
     <div class="play">
         <div class="play container">
-            <div class="row justify-content-center" v-if="activeQuest?.type == 0">
+            <div class="row justify-content-center" v-if="activeIndex == 0">
                 <img :src="logo" alt="Logo" class="logo mb-4 w-75 w-md-50"/>
             </div>
             <div class="row text-center mt-2" v-if="activeQuest">
-                <div class="d-flex justify-content-left mb-5">
+                <div class="d-flex justify-content-left mb-2">
                     <Button @click="back" v-if="canGoBack">
                         BACK
                     </Button>
                 </div>
-                <div v-if="activeQuest.type < 2">
-                    <p>
+            </div>
+            <div class="row text-center mt-2" v-if="activeQuest">
+                <div class="col-12 play-clue" v-if="activeQuest.type < 2" :class="[
+                    `quest_${activeIndex}`,
+                    isLast ? 'quest_last' : ''
+                ]">
+                    <div>
+                        <p>
                         {{ activeQuest.bodyText }}
-                    </p>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="container-fluid p-0" v-if="activeQuest?.type == 3">
+            <h3 class="text-center mb-2">{{ gameToRender.title }}</h3>
             <chocolate-bunny v-if="gameToRender.templateId == 1001" />
             <egg-basket v-if="gameToRender.templateId == 1002" />
             <feed-the-bunny v-if="gameToRender.templateId == 1003" />
             <paint-eggs v-if="gameToRender.templateId == 1004" />
+            <crack-the-egg v-if="gameToRender.templateId == 1005" />
         </div>
         <div class="container text-center mt-2">
-            <Button asChild v-slot="slotProps" v-if="nextReady && (activeIndex + 1) < getMyQuests.length">
-                    <RouterLink :to="nextPath" :class="slotProps.class" class="mb-2 text-center">
-                    {{ nextButtonTxt }}
-                    </RouterLink>
-                </Button>
+            <div class="row">
+                <div class="col-12 col-md-6 offset-md-3">
+                    <Button asChild v-slot="slotProps" v-if="nextReady && !isLast">
+                        <RouterLink :to="nextPath" :class="slotProps.class" class="mb-2 text-center">
+                        {{ nextButtonTxt }}
+                        </RouterLink>
+                    </Button>
+                    <form @submit.prevent="checkout" v-if="showPromoCta">
+                        <div class="mb-3">
+                            <label for="email" class="form-label hidden">Email Address</label>
+                            <InputText type="email" id="email" v-model="email" class="form-control" required placeholder="Email Address"/>
+                        </div>
+                        <Button 
+                            type="submit"
+                            :disabled="loading"
+                            :loading="loading"
+                            label="Buy Now"
+                            class="btn btn-primary w-100">
+                        </Button>
+                        <p v-if="errorReason">
+                            {{ errorReason }}
+                        </p>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -40,6 +69,8 @@ import ChocolateBunnyVue from '@/components/Games/ChocolateBunny/ChocolateBunny.
 import EggBasketVue from '@/components/Games/EggBasket/EggBasket.vue';
 import FeedTheBunnyGame from '@/components/Games/FeedTheBunny/FeedTheBunny.vue';
 import PaintEggs from '@/components/Games/PaintEggs/PaintEggs.vue';
+import CrackTheEgg from '@/components/Games/CrackTheEgg/CrackTheEgg.vue';
+import { checkout } from '@/services/api.service';
 
 const shuffle = (deck) => {
     for (let i = deck.length - 1; i > 0; i--) {
@@ -55,13 +86,17 @@ export default {
         'chocolate-bunny': ChocolateBunnyVue,
         'egg-basket': EggBasketVue,
         'feed-the-bunny': FeedTheBunnyGame,
-        'paint-eggs': PaintEggs
+        'paint-eggs': PaintEggs,
+        'crack-the-egg': CrackTheEgg
     },
     data() {
         return {
             logo,
             nextReady: false,
-            gameOrder: {}
+            gameOrder: {},
+            email: null,
+            loading: false,
+            errorReason: null,
         }
     },
     watch: {
@@ -129,6 +164,12 @@ export default {
                 templateId: q.templateId
             })).filter(x => x.type == 3 && x.templateId == 1000);
             // filter to only games that are the random assigned
+        },
+        isLast() {
+            return (this.activeIndex + 1) == this.getMyQuests.length;
+        },
+        showPromoCta() {
+            return this.nextReady && this.isLast && this.$route.params.shareId == "2-eggs2025";
         }
     },
     mounted() {
@@ -147,14 +188,40 @@ export default {
             const shuffled = shuffle([...allGames]);
             for(let i = 0; i < this.gameIndexes.length; i++) {
                 const item = this.gameIndexes[i];
-                const selected = shuffled[i];
+                const rolledIndex = i % shuffled.length;
+                const selected = shuffled[rolledIndex];
                 list[item.index] = {
                     ...selected,
                     templateId: selected.id
                 };
             }
             this.gameOrder = list;
-        }
+        },
+        async checkout() {
+            try {
+                this.loading = true;
+                this.errorReason = null;
+                const data = {
+                    email: this.email,
+                }
+                const response = await checkout(data);
+                if (response.success) {
+                    window.location.href = response.url; // Redirect to the checkout page
+                } else {
+                    this.errorReason = response.reason;
+                    this.loading = false;
+                    console.error('Checkout failed:', response.message);
+                    if (this.errorReason == 'Account already exists') {
+                        setTimeout(() => {
+                            this.$router.push({name: 'Login'});
+                        }, 1500);
+                    }
+                }
+            } catch (error) {
+                this.loading = false;
+                console.error('Error registering user:', error);
+            }
+        },
     }
 }
 </script>
@@ -167,5 +234,34 @@ export default {
         width: 80%;
         max-width:  300px;
         display: block;
+    }
+
+    .play-clue {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 60vh;
+        font-size: 1.40rem;
+        line-height: 1.2;
+        @media screen and (min-width: 768px) {
+            min-height: 40vh;
+        }
+        
+        &.quest_0, &.quest_last {
+            min-height: 40vh;
+            @media screen and (min-width: 768px) {
+                min-height: 30vh;
+            }
+        }
+
+        > div {
+            width: 100%;
+            display: block;
+        }
+        
+        @media screen and (min-width: 768px) {
+            line-height: 1.35;
+            font-size: 1.75rem;
+        }
     }
 </style>

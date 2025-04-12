@@ -2,20 +2,8 @@
   <RouterView />
 </template>
 <script>
-import { getExamples } from '@/services/api.service';
-import { mapMutations } from 'vuex';
-
 export default {
   name: 'App',
-  async created() {
-    const e = await getExamples();
-    this.setExamples(e.data);
-  },
-  methods: {
-    ...mapMutations({
-      'setExamples': 'SET_EXAMPLES'
-    })
-  }
 }
 </script>
 

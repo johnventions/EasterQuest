@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 import grass from '@/assets/games/bg_grass.jpg';
-import basket from '@/assets/games/basket.png';
+import basketImg from '@/assets/games/basket.png';
 import eggs from '../eggs.js';
 
-import { Application, Assets, Sprite, Graphics, RenderTexture, Rectangle, SCALE_MODES } from 'pixi.js';
+import { loadAssets } from '../loader';
+
+import { Application, Assets, Sprite, Graphics} from 'pixi.js';
 
 const rectsIntersect = (a, b) => {
     return a.x + a.width > b.x &&
@@ -28,12 +30,18 @@ class GameController {
     }
 
     async init() {
+        const assetsToLoad = [
+            { alias: 'grass', src: grass },
+            { alias: 'eb_basket', src: basketImg },
+            ...eggs,
+            ];
+
+        await loadAssets(this.app, assetsToLoad, 'eggBasket');
         const app = this.app;
-        await this.loadGrass(this.app);
-        const basket = await this.loadBasket(this.app);
-        const dropZone = await this.loadDropzone(this.app, basket);
-        const textures = await Assets.load(eggs);
-        const textureKeys = Object.keys(textures);
+        this.loadGrass(this.app);
+        const basket = this.loadBasket(this.app);
+        const dropZone = this.loadDropzone(this.app, basket);
+        const textureKeys = eggs.map(x => x.alias);
 
         const onDragStart = (bunny) => {
             bunny.alpha = 0.8;
@@ -44,7 +52,7 @@ class GameController {
         const createEgg = (x, y, app) => {
                 const index = Math.floor(Math.random() * textureKeys.length);
                 const randomKey = textureKeys[index];
-                const randomTexture = textures[randomKey];
+                const randomTexture = Assets.get(randomKey);
                 const egg = new Sprite(randomTexture);
                 egg.eventMode = 'static';
                 egg.cursor = 'pointer';
@@ -103,8 +111,8 @@ class GameController {
         
     }
 
-    async loadGrass(app) {
-        const grassBg = await Assets.load(grass);
+    loadGrass(app) {
+        const grassBg = Assets.get(grass);
         
         const grassTexture = Sprite.from(grassBg);
         grassTexture.width = app.screen.width;
@@ -114,8 +122,8 @@ class GameController {
         app.stage.addChild(grassTexture);
     }
 
-    async loadBasket(app) {
-        const basketAsset = await Assets.load(basket);
+    loadBasket(app) {
+        const basketAsset = Assets.get('eb_basket');
         
         const basketTexture = Sprite.from(basketAsset);
         basketTexture.width = Math.min(app.screen.width * 0.75, 300);

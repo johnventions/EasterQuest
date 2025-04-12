@@ -1,68 +1,72 @@
 <template>
-    <div class="p-4">
-        <payment-thank-you v-model:active="showPaymentModal"/>
-        <div v-if="step == 1">
-            <h1>Lets Get Started</h1>
-            <p>
-                From the list below, select the locations you would be able to hide a scaveger hunt clue (for example: an egg, candy, sticker, toy, etc).
-            </p>
-            <p>
-                (You can change or add more to this list later)
-            </p>
-            <div v-for="category of quickStartExamples"     
-                :key="category.id"
-                class="flex items-center gap-4 mb-2">
-                <Checkbox 
-                    v-model="selectedCategories" 
-                    :inputId="`checkbox__${category.id}`" 
-                    name="category" 
-                    :value="category.id" />
-                <label 
-                    :for="`checkbox__${category.id}`" 
-                    class="px-2">
-                    {{ category.title }}
-                </label>
-            </div>
-            <Button 
-                class="mt-4 w-100 d-block" 
-                :disabled="(selectedCategories?.length ?? 0) == 0"
-                @click="setCategories">
-                Next
-            </Button>
-        </div>
-        <div v-if="step == 2">
-            <h2 class="mb-4">
-                Finishing touches
-            </h2>
-            <div class="d-flex gap-2">
-                <div>
-                    <ToggleSwitch v-model="personalize" />
+    <div class="container p-4">
+        <div class="row">
+            <div class="col-12 col-md-8 offset-md-2">
+                <payment-thank-you v-model:active="showPaymentModal"/>
+                <div v-if="step == 1">
+                    <h1>Lets Get Started</h1>
+                    <p>
+                        From the list below, select the locations you would be able to hide a scaveger hunt clue (for example: an egg, candy, sticker, toy, etc).
+                    </p>
+                    <p>
+                        (You can change or add more to this list later)
+                    </p>
+                    <div v-for="category of quickStartExamples"     
+                        :key="category.id"
+                        class="flex items-center gap-4 mb-2">
+                        <Checkbox 
+                            v-model="selectedCategories" 
+                            :inputId="`checkbox__${category.id}`" 
+                            name="category" 
+                            :value="category.id" />
+                        <label 
+                            :for="`checkbox__${category.id}`" 
+                            class="px-2">
+                            {{ category.title }}
+                        </label>
+                    </div>
+                    <Button 
+                        class="mt-4 w-100 d-block" 
+                        :disabled="(selectedCategories?.length ?? 0) == 0"
+                        @click="setCategories">
+                        Next
+                    </Button>
                 </div>
-                <p>
-                    Personalize my quest with my child's name(s) below:
-                </p>
-            </div>
-            <InputText 
-                class="d-block w-100 mb-4"
-                :disabled="personalize == false"
-                type="text" 
-                v-model="childName" placeholder="Names" />
-            <div class="d-flex gap-2">
-                <div>
-                    <ToggleSwitch v-model="addGames" />
+                <div v-if="step == 2">
+                    <h2 class="mb-4">
+                        Finishing touches
+                    </h2>
+                    <div class="d-flex gap-2">
+                        <div>
+                            <ToggleSwitch v-model="personalize" />
+                        </div>
+                        <p>
+                            Personalize my quest with my child's name(s) below:
+                        </p>
+                    </div>
+                    <InputText 
+                        class="d-block w-100 mb-4"
+                        :disabled="personalize == false"
+                        type="text" 
+                        v-model="childName" placeholder="Names" />
+                    <div class="d-flex gap-2">
+                        <div>
+                            <ToggleSwitch v-model="addGames" />
+                        </div>
+                        <p>
+                            Add some simple games to my Easter Quest
+                        </p>
+                    </div>
+                    <Button 
+                        class="mt-4 w-100 d-block" 
+                        @click="setPreferences">
+                        Next
+                    </Button>
                 </div>
-                <p>
-                    Add some simple games to my Easter Quest
-                </p>
+                <div v-if="step == 3">
+                    <h3>Building your Easter Quest..</h3>
+                </div>
             </div>
-            <Button 
-                class="mt-4 w-100 d-block" 
-                @click="setPreferences">
-                Next
-            </Button>
-        </div>
-        <div v-if="step == 3">
-            <h3>Building your Easter Quest..</h3>
         </div>
     </div>
 </template>

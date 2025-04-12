@@ -14,6 +14,9 @@ import Timeline from 'primevue/timeline';
 import Toast from 'primevue/toast';
 import Password from 'primevue/password';
 
+import Carousel from 'primevue/carousel';
+
+
 const registerPrimeVue = (app) => {
     app.use(PrimeVue, {
         theme: {
@@ -33,6 +36,7 @@ const registerPrimeVue = (app) => {
     app.component('Select', Select);
     app.component('Timeline', Timeline);
     app.component('Toast', Toast);
+    app.component('Carousel', Carousel);
 }
 
 export default registerPrimeVue;

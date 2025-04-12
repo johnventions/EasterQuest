@@ -7,12 +7,12 @@ import PlayMode from '@/pages/PlayMode/PlayMode.vue';
 import Register from '@/pages/Register/Register.vue';
 
 import store from '@/store';
-import { getQuests, getLoginState, getSharedQuests } from '@/services/api.service';
+import { getQuests, getLoginState, getSharedQuests, getExamples } from '@/services/api.service';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
 
 
-const getQuestsCount = async () => {
-    if (store.state.myQuests == null) {
+const getQuestsCount = async (forceRefresh = false) => {
+    if (store.state.myQuests == null || forceRefresh) {
         // we have never looked up the quests
         const quests = await getQuests();
         const questList = quests ?? [];
@@ -22,8 +22,8 @@ const getQuestsCount = async () => {
     return store.state.myQuests.length;
 }
 
-const mustHaveQuests = async (next) => {
-    if(await getQuestsCount() == 0) {
+const mustHaveQuests = async (next, forceRefresh) => {
+    if(await getQuestsCount(forceRefresh) == 0) {
         next({ name: 'Setup'});
         return;
     }
@@ -38,8 +38,15 @@ const mustNotHaveQuests = async (next) => {
     next();
 }
 
+const mustHaveExamples = async () => {
+    if (store.state.examples.length == 0) {
+        // we have never looked up the quests
+        const examples = await getExamples();
+        store.commit('SET_EXAMPLES', examples.data);
+    }
+}
+
 const loadSharedQuests = async (to) => {
-    console.log(to.params);
     if ((store.state.myQuests ?? []).length == 0) {
         const questList = await getSharedQuests(to.params.shareId);
         store.commit('SET_QUESTS', questList ?? []);
@@ -87,14 +94,14 @@ const routes = [
     },
     { 
         path: '/dash',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, requiresExamples: true },
         children: [
             {
                 path: '',
                 name: 'Dashboard',
                 component: DashboardView,
                 beforeEnter: async (to, from, next) => {
-                    await mustHaveQuests(next);
+                    await mustHaveQuests(next, true);
                 },
             },
             { 
@@ -126,9 +133,9 @@ const routes = [
         path: '/play/:id',
         component: PlayMode,
         name: 'Play',
-        meta: { requiresAuth: true },
+        meta: { requiresAuth: true, requiresExamples: true },
         beforeEnter: async (to, from, next) => {
-            await mustHaveQuests(next);
+            await mustHaveQuests(next, true);
         },
     },
     {
@@ -136,7 +143,7 @@ const routes = [
         path: '/share/:shareId',
         component: PlayMode,
         name: 'Share',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: false, requiresExamples: true },
         beforeEnter: async (to, from, next) => {
             await loadSharedQuests(to);
             next();
@@ -158,6 +165,9 @@ const router = createRouter({
 
 
 router.beforeEach(async (to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresExamples)) {
+        await mustHaveExamples();
+    }
     if (to.matched.some(record => record.meta.requiresAuth)) {
         // this route requires auth, check if logged in
         console.log('checking auth');

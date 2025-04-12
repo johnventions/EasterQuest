@@ -53,6 +53,7 @@ class UserService
         try {
             $userId = $this->auth->register($email, $password);
             if ($userId) {
+                $this->addUserSettings($userId, true);
                 return $this->login($email, $password);
             }
         }

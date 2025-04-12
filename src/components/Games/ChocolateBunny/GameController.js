@@ -3,6 +3,7 @@ import bunnyOutline from '@/assets/games/bunny_mask.png';
 import bunny from '@/assets/games/chocolate_bunny.png';
 import grass from '@/assets/games/bg_grass.jpg';
 
+import { loadAssets } from '../loader';
 
 import { Application, Assets, Sprite, Graphics, RenderTexture, Rectangle } from 'pixi.js';
 
@@ -19,20 +20,27 @@ class GameController {
         canvas.appendChild(app.view);
         this.app = app;
         this.ratio = width / height;
-        console.log(width, height, this.ratio);
     }
 
     async init() {
-        const brushSize = 100 * this.ratio; // Size of the brush (black dot)
+        const assetsToLoad = [
+            { alias: 'grass', src: grass },
+            { alias: 'cb_bunnyOutline', src: bunnyOutline },
+            { alias: 'cb_bunny', src: bunny },
+            ];
+
+        await loadAssets(this.app, assetsToLoad, 'chocolateBunny');
+
+        const brushSize = Math.min(100 * this.ratio, 30); // Size of the brush (black dot)
         // Create a brush (black dot) for erasing areas in the mask
         const brush = new Graphics();
         brush.beginFill(0x000000); // Black color for masking (hiding)
         brush.drawCircle(0, 0, brushSize); // Dot with radius of 20 pixels
         brush.endFill();
 
-        await this.loadGrass(this.app);
-        const baseSprite = await this.loadBunny(this.app, this.ratio);
-        const maskSprite = await this.loadMask(this.app, baseSprite);
+        this.loadGrass(this.app);
+        const baseSprite = this.loadBunny(this.app, this.ratio);
+        const maskSprite = this.loadMask(this.app, baseSprite);
 
         // Create a RenderTexture for the mask to modify it
         const maskTexture = RenderTexture.create({
@@ -76,9 +84,8 @@ class GameController {
     }
 
 
-    async loadGrass(app) {
-        const grassBg = await Assets.load(grass);
-        
+    loadGrass(app) {
+        const grassBg = Assets.get('grass');
         const grassTexture = Sprite.from(grassBg);
         grassTexture.width = app.screen.width;
         grassTexture.height = app.screen.height;
@@ -87,10 +94,9 @@ class GameController {
         app.stage.addChild(grassTexture);
     }
 
-    async loadBunny(app, ratio) {
-        console.log(ratio);
+    loadBunny(app, ratio) {
         // Load the base image (Eiffel Tower)
-        const baseImage = await Assets.load(bunny);
+        const baseImage = Assets.get('cb_bunny');
         const baseSprite = new Sprite(baseImage);
         baseSprite.width = app.screen.width * (1 / ratio);
         baseSprite.height = baseSprite.width;
@@ -99,9 +105,9 @@ class GameController {
         return baseSprite;
     }
 
-    async loadMask(app, baseSprite) {
+    loadMask(app, baseSprite) {
         // Load the mask image (black and white)
-        const maskImage = await Assets.load(bunnyOutline);
+        const maskImage = Assets.get('cb_bunnyOutline');
         const maskSprite = new Sprite(maskImage);
         maskSprite.width = baseSprite.width
         maskSprite.height = baseSprite.height;
