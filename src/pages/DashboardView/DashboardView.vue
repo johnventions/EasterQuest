@@ -33,30 +33,35 @@
           </p>
         </div>
     </Dialog>
-    <TransitionGroup tag="div" name="fade" class="container">
-        <div class="row"
-          v-for="(quest, i) in orderedQuests" 
-          :key="quest.id">
-          <div class="col-1 offset-md-2 gap-4 d-flex flex-column justify-content-center">
-            <Button icon="pi pi-arrow-circle-up"
-              v-if="quest.type != 0"
-              @click="moveUp(i)"
-              :disabled="quest.itemOrder < 2"
-              size="small"
-              aria-label="Move Up" />
-            <Button icon="pi pi-arrow-circle-down"
-              v-if="quest.type != 0"
-              :disabled="quest.type == 0 || (i + 2 == orderedQuests.length)"
-              @click="moveDown(i)"
-              size="small"
-              aria-label="Move Down" />
+    <div class="row">
+      <div class="col-12 col-md-8 offset-md-2">
+        <TransitionGroup tag="div" name="fade" class="container">
+          <div class="row"
+            v-for="(quest, i) in orderedQuests" 
+            :key="quest.id">
+            <div class="col-1 d-flex flex-row gap-2">
+              <Button icon="pi pi-arrow-circle-up"
+                v-if="quest.type != 0"
+                @click="moveUp(i)"
+                :disabled="quest.itemOrder < 2"
+                size="small"
+                aria-label="Move Up" />
+              <Button icon="pi pi-arrow-circle-down"
+                v-if="quest.type != 0"
+                :disabled="quest.type == 0 || (i + 2 == orderedQuests.length)"
+                @click="moveDown(i)"
+                size="small"
+                aria-label="Move Down" />
+            </div>
+            <div class="col-11 col-md-7">
+              <quest-card
+                :quest="quest" :index="i" />
+            </div>
           </div>
-          <div class="col-11 col-md-7">
-            <quest-card
-              :quest="quest" :index="i" />
-          </div>
-        </div>
-    </TransitionGroup>
+      </TransitionGroup>
+      </div>
+    </div>
+>>>>>>> 75b9817de453dbf72d4d5f3122402a9bebbb4711
     <create-quest v-model:active="createMenuOpen" />
     <div class="mt-5 d-flex justify-content-center">
       <Button 
