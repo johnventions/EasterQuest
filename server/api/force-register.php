@@ -8,7 +8,7 @@ include "../db.php";
 
 $data = json_decode(file_get_contents("php://input"), true);
 if (isset($data['email'], $data['access_code'], $data['password'])) {
-    if($data['access_code'] != 'easter78xq6y') {
+    if(strcasecmp(trim($data['access_code']), 'easter78xq6y') !== 0) {
         // reject request
         die('Invalid access code');
     }
