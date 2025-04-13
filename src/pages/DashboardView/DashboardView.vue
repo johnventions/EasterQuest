@@ -33,26 +33,30 @@
           </p>
         </div>
     </Dialog>
-    <TransitionGroup tag="div" name="fade" class="container">
-        <div class="row"
-          v-for="(quest, i) in getMyQuests" 
-          :key="quest.id">
-          <div class="col-1">
-            <Button icon="pi pi-arrow-circle-up"
-              @click="moveUp(i)"
-              size="small"
-              aria-label="Move Up" />
-            <Button icon="pi pi-arrow-circle-down"
-              @click="moveDown(i)"
-              size="small"
-              aria-label="Move Down" />
-          </div>
-          <div class="col-11 col-md-7 offset-md-2">
-            <quest-card
-              :quest="quest" :index="i" />
-          </div>
-        </div>
-    </TransitionGroup>
+    <div class="row">
+      <div class="col-12 col-md-8 offset-md-2">
+          <TransitionGroup tag="div" name="fade">
+            <div class="row"
+              v-for="(quest, i) in getMyQuests" 
+              :key="quest.id">
+              <div class="col-1 d-flex flex-row gap-2">
+                <Button icon="pi pi-arrow-circle-up"
+                  @click="moveUp(i)"
+                  size="small"
+                  aria-label="Move Up" />
+                <Button icon="pi pi-arrow-circle-down"
+                  @click="moveDown(i)"
+                  size="small"
+                  aria-label="Move Down" />
+              </div>
+              <div class="col-11">
+                <quest-card
+                  :quest="quest" :index="i" />
+              </div>
+            </div>
+        </TransitionGroup>
+      </div>
+    </div>
     <create-quest v-model:active="createMenuOpen" />
   </div>
 </template>
