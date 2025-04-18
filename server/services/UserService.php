@@ -148,4 +148,85 @@ class UserService
             return false;
         }
     }
+
+    public function sendPasswordReset($email) {
+        try {
+            $this->auth->forgotPassword($email, function ($selector, $token) use (&$resetId) {
+                $resetId = [
+                    'selector' => $selector,
+                    'token' => $token
+                ];
+            });
+            return [
+                'success' => true,
+                'selector' => $resetId['selector'],
+                'token' => $resetId['token'],
+                'errorMsg' => null
+            ];
+        } catch (\Delight\Auth\InvalidEmailException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Invalid email address'
+            ];
+        } catch (\Delight\Auth\EmailNotVerifiedException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Email not verified'
+            ];
+        } catch (\Delight\Auth\TooManyRequestsException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Too many requests'
+            ];
+        }
+    }
+
+    public function finishPasswordReset($selector, $token, $password) {
+        try {
+            $this->auth->resetPassword($selector, $token, $password);
+        
+            return [
+                'success' => true,
+                'errorMsg' => null
+            ];
+        }
+        catch (\Delight\Auth\InvalidSelectorTokenPairException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Invalid token'
+            ];
+        }
+        catch (\Delight\Auth\TokenExpiredException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Token expired'
+            ];
+        }
+        catch (\Delight\Auth\ResetDisabledException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Password reset is disabled'
+            ];
+        }
+        catch (\Delight\Auth\InvalidPasswordException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Invalid password, pick new password'
+            ];
+        }
+        catch (\Delight\Auth\TooManyRequestsException $e) {
+            return [
+                'success' => false,
+                'resetId' => null,
+                'errorMsg' => 'Too many requests'
+            ];
+        }
+    }
 }

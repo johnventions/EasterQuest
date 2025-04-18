@@ -2,13 +2,16 @@
 import bunnyOutline from '@/assets/games/bunny_mask.png';
 import bunny from '@/assets/games/chocolate_bunny.png';
 import grass from '@/assets/games/bg_grass.jpg';
+import chomp from '@/assets/games/sounds/chomp.mp3';
 
 import { loadAssets } from '../loader';
+import { soundControls  } from '../soundControls';
 
 import { Application, Assets, Sprite, Graphics, RenderTexture, Rectangle } from 'pixi.js';
+import { Howl } from 'howler';
 
 class GameController {
-    constructor(canvas, width = 300, height = 450) {
+    constructor(canvas, width = 300, height = 450, soundEnabled  = true) {
         const app = new Application({
             width,
             height,
@@ -20,6 +23,9 @@ class GameController {
         canvas.appendChild(app.view);
         this.app = app;
         this.ratio = width / height;
+
+        const sound = soundControls(soundEnabled);
+        Object.assign(this, sound);
     }
 
     async init() {
@@ -31,7 +37,15 @@ class GameController {
 
         await loadAssets(this.app, assetsToLoad, 'chocolateBunny');
 
-        const brushSize = Math.min(100 * this.ratio, 30); // Size of the brush (black dot)
+        const chompSound = new Howl({
+            src: [chomp],
+            preload: true
+          });
+
+        let brushSize = 50;
+        if (this.app.width > 600) {
+            brushSize = 70;
+        }
         // Create a brush (black dot) for erasing areas in the mask
         const brush = new Graphics();
         brush.beginFill(0x000000); // Black color for masking (hiding)
@@ -69,6 +83,7 @@ class GameController {
         const onPointerDown = (event) => {
             const { x, y } = event.global;
             addMaskDot(x, y); // Add black dot at the clicked position
+            if (this.soundEnabled) chompSound.play();
         };
 
         // Interaction layer to catch pointer events

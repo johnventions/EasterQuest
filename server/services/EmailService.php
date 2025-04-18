@@ -46,4 +46,41 @@ class EmailService
             return false;
         }
     }
+
+    public function sendPasswordResetEmail($toEmail, $subject, $resetLink) {
+        $templateId = 6902606;
+        $body = [
+            'Messages' => [
+            [
+                'From' => [
+                'Email' => $_ENV['MAILJET_FROM_EMAIL'],
+                'Name'  => $_ENV['MAILJET_FROM_NAME']
+                ],
+                'To' => [
+                [
+                    'Email' => $toEmail,
+                    'Name'  => $toEmail
+                ]
+                ],
+                'Subject'          => $subject,
+                'TemplateID'       => (int)$templateId,
+                'TemplateLanguage' => true,
+                'Variables'        => [
+                    'resetLink' => $resetLink
+                ],
+                'CustomID'         => 'EasterQuestPasswordTemplateSend'
+            ]
+            ]
+        ];
+
+        try {
+            $response = $this->mj->post(Resources::$Email, ['body' => $body]);
+            if ($response->success()) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
 }

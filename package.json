@@ -11,6 +11,8 @@
     "@primeuix/themes": "^1.0.0",
     "axios": "^1.8.4",
     "core-js": "^3.8.3",
+    "howler": "^2.2.4",
+    "howler-pixi-loader-middleware": "^4.0.3",
     "json5": "^2.2.3",
     "pixi.js": "7.3.3",
     "primeicons": "^7.0.0",

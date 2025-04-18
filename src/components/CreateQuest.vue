@@ -1,5 +1,6 @@
 <template>
     <Dialog
+        header="Create Quest"
         v-model:visible="localActive" modal>
         <div v-if="step == 1" class="text-center">
             <h1>
@@ -11,11 +12,11 @@
                 >
                     Find Something
                 </Button>
-                <Button  class="d-block w-75 mb-2"
+                <!-- <Button  class="d-block w-75 mb-2"
                     @click="setType(2)"
                 >
                     Do Something
-                </Button>
+                </Button> -->
                 <Button class="d-block w-75 mb-2"
                     @click="setType(3)"
                 >
@@ -152,7 +153,10 @@ export default {
                 }];
                 const response = await createQuests(questData);
                 if (response != null) {
-                    this.addQuests(response);
+                    this.addQuests(response.map((x) =>({
+                        ...x,
+                        displayOrder: x.itemOrder
+                    })));
                     this.localActive = false;
                 } else {
                     console.error('Error creating quest:', response.statusText);

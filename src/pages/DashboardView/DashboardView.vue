@@ -3,28 +3,31 @@
     <div class="row">
       <div class="col-12 col-md-8 offset-md-2 mb-4">
         <Button 
-          class="d-block w-100 mb-2"
+          class="w-100 mb-2"
+          label="Play Your Quest"
+          icon="pi pi-play-circle"
           @click="() => shareModalOpen = true">
-        + Play Your Quest
         </Button>
         <hr />
         <Button 
-          class="d-block w-100 mb-2"
+          class="w-100 mb-2"
+          label="Add To Your Quest"
+          icon="pi pi-plus-circle"
           @click="() => createMenuOpen = true">
-        + Add To Your Quest
         </Button>
       </div>
     </div>
     <Dialog
+        header="Play Your Quest"
         v-model:visible="shareModalOpen" modal>
         <div>
           <Button asChild v-slot="slotProps">
             <RouterLink to="/play/0" :class="slotProps.class" class="d-block w-100 mb-2 text-center">
-              Click to Play Your Quest Now
+              Click here to play your quest now
             </RouterLink>
           </Button>
           <hr/>
-          <p>
+          <p class="text-center">
             Or use the below URL to play your quest on another device.
             <a :href="shareUrl" target="_blank" class="d-block">
               {{ shareUrl }}
@@ -39,7 +42,7 @@
           <div class="row"
             v-for="(quest, i) in orderedQuests" 
             :key="quest.id">
-            <div class="col-1 d-flex flex-row gap-2">
+            <div class="col-1 d-flex flex-column gap-2">
               <Button icon="pi pi-arrow-circle-up"
                 v-if="quest.type != 0"
                 @click="moveUp(i)"
@@ -53,7 +56,7 @@
                 size="small"
                 aria-label="Move Down" />
             </div>
-            <div class="col-11 col-md-7">
+            <div class="col-11">
               <quest-card
                 :quest="quest" :index="i" />
             </div>
@@ -61,7 +64,6 @@
       </TransitionGroup>
       </div>
     </div>
->>>>>>> 75b9817de453dbf72d4d5f3122402a9bebbb4711
     <create-quest v-model:active="createMenuOpen" />
     <div class="mt-5 d-flex justify-content-center">
       <Button 

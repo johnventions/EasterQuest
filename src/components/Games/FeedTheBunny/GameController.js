@@ -1,13 +1,18 @@
 /* eslint-disable no-unused-vars */
 import dirt from '@/assets/games/dirt.jpg';
 import carrotImg from '@/assets/games/carrot_top.png';
+import carrotImgGrey from '@/assets/games/carrot_grey.png';
 import fullCarrotImg from '@/assets/games/carrot.png';
 import bunnyImg from '@/assets/games/bunny_right.png';
 import heartImg from '@/assets/games/heart.png';
+import chomp from '@/assets/games/sounds/chomp.mp3';
+import pop from '@/assets/games/sounds/pop.mp3';
 
 import { loadAssets } from '../loader';
+import { soundControls  } from '../soundControls';
 
 import { Application, Assets, Sprite, Graphics } from 'pixi.js';
+import { Howl } from 'howler';
 
 const rectsIntersect = (a, b) => {
     return a.x + a.width > b.x &&
@@ -17,7 +22,7 @@ const rectsIntersect = (a, b) => {
 }
 
 class GameController {
-    constructor(canvas, width = 300, height = 450) {
+    constructor(canvas, width = 300, height = 450, soundEnabled  = true) {
         console.log('render');
         const app = new Application({
             width,
@@ -31,18 +36,31 @@ class GameController {
         canvas.appendChild(app.view);
         this.app = app;
         this.ratio = width / height;
+
+        const sound = soundControls(soundEnabled);
+        Object.assign(this, sound);
     }
 
     async init() {
         const assetsToLoad = [
             { alias: 'fb_dirt', src: dirt },
             { alias: 'fb_carrot', src: carrotImg },
+            { alias: 'fb_carrot_g', src: carrotImgGrey },
             { alias: 'fb_fullCarrot', src: fullCarrotImg },
             { alias: 'fb_heart', src: heartImg },
             { alias: 'fb_bunny', src: bunnyImg },
             ];
 
         await loadAssets(this.app, assetsToLoad, 'crackEgg');
+        
+        const chompSound = new Howl({
+                    src: [chomp],
+                    preload: true
+                  });
+        const popSound = new Howl({
+                    src: [pop],
+                    preload: true
+                });
         
         const app = this.app;
         this.loaddirt(this.app);
@@ -56,6 +74,8 @@ class GameController {
             app.stage.on('pointermove', onDragMove);
         }
 
+        let points = 0;
+        const carrotStatus = this.loadStatusBar(this.app);
         const [bunny, bunnyHeart] = this.loadBunny(this.app);
         const [carrot, hole] = this.loadCarrot(this.app);
         const fullCarrot = this.loadFullCarrot(this.app, carrot);
@@ -70,11 +90,13 @@ class GameController {
                 const stretchHeight = origHeight * (1 + progressRatio);
                 carrot.height = stretchHeight;
                 if (progressRatio > 0.5) {
+                    // pull fully from the ground
                     carrot.height = origHeight;
                     carrot.visible = false;
                     pullTarget = fullCarrot;
                     hole.visible = true;
                     fullCarrot.visible = true;
+                    if (this.soundEnabled) popSound.play();
                 }
             } else if (pullTarget?.parent && pullTarget != carrot) {
                 pullTarget.parent.toLocal(event.global, null, pullTarget.position);
@@ -96,6 +118,11 @@ class GameController {
     
                     if (rectsIntersect(dragBounds, dropBounds)) {
                         bunnyHeart.visible = true;
+                        if (carrotStatus[points]) {
+                            carrotStatus[points].texture = Assets.get('fb_fullCarrot');
+                        }
+                        points++;
+                        if (this.soundEnabled) chompSound.play();
                         setTimeout(() => {
                             bunnyHeart.visible = false;
                         }, 1000);
@@ -151,6 +178,26 @@ class GameController {
         app.stage.addChild(hole);
         app.stage.addChild(carrotTexture);
         return [carrotTexture, hole];
+    }
+
+    loadStatusBar(app) {
+        let icons = [];
+        for (let i=0; i<3; i++) {
+            const carrotGraphic = Assets.get('fb_carrot_g');
+            const carrotTexture = Sprite.from(carrotGraphic);
+            carrotTexture.width = Math.min(app.screen.width / 4, 100);
+            carrotTexture.height = carrotTexture.width * 1.75;
+            carrotTexture.anchor.set(0.5, 0);
+            carrotTexture.x = (app.screen.width / 2) + ((i-1) * carrotTexture.width);
+            carrotTexture.y =  30;
+            carrotTexture.eventMode = 'static';
+            carrotTexture.cursor = 'pointer';
+            app.stage.addChild(carrotTexture);
+            icons.push(carrotTexture);
+        }
+
+        return icons;
+        
     }
 
     loadFullCarrot(app, carrot) {

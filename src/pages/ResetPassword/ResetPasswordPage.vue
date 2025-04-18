@@ -10,32 +10,27 @@
             <div class="col-12 col-md-6 offset-md-3 p-4">
                 <div class="card">
                     <div class="card-header text-center">
-                        <h3>Login</h3>
+                        <h3>Password Reset</h3>
                         <p>
-                            Enter your login credentials below to continue building your Easter Quest
+                            Please pick a new password
                         </p>
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="login">
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <InputText type="email" id="email" v-model="email" class="form-control" required />
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" class="form-label">New Password</label>
                                 <InputText type="password" id="password" v-model="password" class="form-control" required />
                             </div>
                             <Button
                                 :loading="loading"
                                 type="submit"
-                                label="Login"
+                                label="Set Password"
                                 class="w-100"
                             />
                             <div v-if="errorMsg">
                                 {{ errorMsg }}
                             </div>
                         </form>
-                        <Button text label="I forgot my password" @click="() => forgotPasswordOpen = true"/>
                     </div>
                 </div>
             </div>
@@ -43,50 +38,41 @@
     </div>
 </template>
 <script>
-import { loginUser } from '@/services/api.service';
-import { mapMutations } from 'vuex';
-import ForgotPassword from './ForgotPassword.vue';
+import { resetPasswordFinish } from '@/services/api.service';
 import logo from '@/assets/logo.png';
 
 export default {
-    name: 'LoginPage',
-    components: {
-        'forgot-password': ForgotPassword
-    },
+    name: 'ResetPassword',
     data() {
         return {
             logo,
             loading: false,
-            email: '',
             password: '',
             errorMsg: null,
-            forgotPasswordOpen: false,
         };
     },
     mounted() {
     },
     methods: {
-        ...mapMutations({
-            'setLogin': 'SET_LOGIN_STATE',
-        }),
         async login() {
             try {
                 const data = {
-                    email: this.email,
                     password: this.password,
+                    selector: this.$route.query.selector,
+                    token: this.$route.query.token,
                 }
                 this.loading = true;
                 this.errorMsg = null;
-                const response = await loginUser(data);
-                if (response.isLoggedIn) {
-                    this.setLogin(response);
-                    this.$router.push({ name: 'Dashboard' });
+                const response = await resetPasswordFinish(data);
+                if (response.success) {
+                    this.$router.push({ name: 'Login' });
                 } else {
-                    this.errorMsg = response.error;
+                    this.errorMsg = response.errorMsg;
                     this.loading = false;
                 }
             } catch (error) {
-                console.error('Error registering user:', error);
+                console.error('Error resetting password:', error);
+                this.errorMsg = 'Error resetting password';
                 this.loading = false;
             }
         }

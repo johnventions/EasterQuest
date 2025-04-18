@@ -126,6 +126,39 @@ Look in the books to find your clue!
 "
   ],
   [
+    "id" => 11,
+    "title" => 'In A Car',
+    "type" => 1,
+    "suggested" => true,
+    "bodyText" => "It has four wheels and seats inside,
+This thing can take you for a ride.
+Buckle up—it's time to go,
+Whether you drive fast and slow.
+"
+  ],
+  [
+    "id" => 12,
+    "title" => 'By A Tree',
+    "type" => 1,
+    "suggested" => true,
+    "bodyText" => "I stand up tall with roots below,
+And leaves that flutter when winds blow.
+Look around — don't climb too high,
+You'll find the clue that is nearby!
+"
+  ],
+  [
+    "id" => 13,
+    "title" => 'On or Under a Table',
+    "type" => 1,
+    "suggested" => true,
+    "bodyText" => "Breakfast, Lunch, and dinner
+Find this clue and you'll be a winner.
+You'd sit here when its time to snack,
+so please start looking and don't turn back.
+"
+  ],
+  [
     "id" => 999,
     "title" => 'Congratulations!',
     "type" => 0,

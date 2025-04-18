@@ -156,7 +156,8 @@ export default {
                         finalQuests.push({
                             ... randomGame, 
                             itemOrder: currentIndex
-                        }); 
+                        });
+                        currentIndex++;
                     }
                 }
                 const quests = await createQuests(finalQuests);

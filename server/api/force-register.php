@@ -17,7 +17,6 @@ if (isset($data['email'], $data['access_code'], $data['password'])) {
     $result = $userService->register($data['email'], $data['password'], true);
     try {
         $emailService = new EmailService();
-        $emailBody = file_get_contents(__DIR__ . '/welcomeEmail.html');
         $emailService->sendMail($data['email'], "Welcome to Easter Quest!");
     } catch(Exception $e)  {
     }

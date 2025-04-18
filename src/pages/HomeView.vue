@@ -97,23 +97,9 @@
                     </Button>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-12 col-md-6 offset-md-3 carousel mb-5">
-                    <Carousel :value="carouselItems" 
-                        :numVisible="2" 
-                        :numScroll="1"
-                        :autoplayInterval="3000"
-                        :circular="true">
-                        <template #item="slotProps">
-                            <div class="border rounded m-2 p-4">
-                                <div class="mb-4">
-                                    <div class="relative mx-auto">
-                                        <img :src="slotProps.data.image" :alt="slotProps.data.name" class="w-full rounded" />
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                    </Carousel>
+            <div class="row text-center justify-content-center footer">
+                <div class="col-12 col-md-6 my-5">
+                    <RouterLink to="/privacy-policy">Privacy Policy</RouterLink> | Contact: hello@easterquest.com
                 </div>
             </div>
         </div>
@@ -299,12 +285,6 @@ export default {
 
     &.grass-static {
         position: relative;
-    }
-}
-
-.carousel {
-    img {
-        max-height: 300px;
     }
 }
 </style>

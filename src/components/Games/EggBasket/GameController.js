@@ -2,10 +2,13 @@
 import grass from '@/assets/games/bg_grass.jpg';
 import basketImg from '@/assets/games/basket.png';
 import eggs from '../eggs.js';
+import ding from '@/assets/games/sounds/ding.mp3';
 
 import { loadAssets } from '../loader';
+import { soundControls  } from '../soundControls';
 
 import { Application, Assets, Sprite, Graphics} from 'pixi.js';
+import { Howl } from 'howler';
 
 const rectsIntersect = (a, b) => {
     return a.x + a.width > b.x &&
@@ -15,7 +18,7 @@ const rectsIntersect = (a, b) => {
 }
 
 class GameController {
-    constructor(canvas, width = 300, height = 450) {
+    constructor(canvas, width = 300, height = 450, soundEnabled  = true) {
         const app = new Application({
             width,
             height,
@@ -27,6 +30,9 @@ class GameController {
         canvas.appendChild(app.view);
         this.app = app;
         this.ratio = width / height;
+        
+        const sound = soundControls(soundEnabled);
+        Object.assign(this, sound);
     }
 
     async init() {
@@ -37,6 +43,11 @@ class GameController {
             ];
 
         await loadAssets(this.app, assetsToLoad, 'eggBasket');
+        const dingSound = new Howl({
+                    src: [ding],
+                    preload: true
+                  });
+
         const app = this.app;
         this.loadGrass(this.app);
         const basket = this.loadBasket(this.app);
@@ -90,10 +101,10 @@ class GameController {
                 const dropBounds = dropZone.getBounds();
 
                 if (rectsIntersect(dragBounds, dropBounds)) {
-                    console.log('Dropped in the basket!');
                     dragTarget.interactive = false;
                     dragTarget.off('pointerdown');
                     app.stage.removeChild(dragTarget);
+                    if (this.soundEnabled) dingSound.play();
                 } else {
                     console.log('Dropped outside the basket!');
                 }

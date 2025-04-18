@@ -5,10 +5,12 @@ import DashboardView from '../pages/DashboardView/DashboardView';
 import QuickStart from '../pages/QuickStart/QuickStart';
 import PlayMode from '@/pages/PlayMode/PlayMode.vue';
 import Register from '@/pages/Register/Register.vue';
+import ResetPasswordPage from '@/pages/ResetPassword/ResetPasswordPage.vue';
 
 import store from '@/store';
 import { getQuests, getLoginState, getSharedQuests, getExamples } from '@/services/api.service';
 import LoginPage from '@/pages/LoginPage/LoginPage.vue';
+import PrivacyPolicy from '@/pages/PrivacyPolicy/PrivacyPolicy.vue';
 
 
 const getQuestsCount = async (forceRefresh = false) => {
@@ -79,6 +81,16 @@ const routes = [
         path: '/log-in',
         name: 'Login',
         component: LoginPage,
+    },
+    {
+        path: '/privacy-policy',
+        name: 'PrivacyPolicy',
+        component: PrivacyPolicy,
+    },
+    {
+        path: '/reset-password',
+        name: 'ResetPassword',
+        component: ResetPasswordPage,
     },
     {
         path: '/login',
@@ -155,6 +167,11 @@ const routes = [
                 component: PlayMode,
             }
         ]
+    },
+    // Add the "not found" route here
+    {
+        path: '/:pathMatch(.*)*', // Matches any route not defined above
+        redirect: '/' // Redirects to the homepage
     }
 ]
 

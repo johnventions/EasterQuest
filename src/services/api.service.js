@@ -9,7 +9,7 @@ export const getQuests = async () => {
     const quests = await axios.get("/api/tasks");
     const ordered = quests.data.map((q, i) => ({
         ...q,
-        displayOrder: (i.type == 0 ? i.itemOrder : i)
+        displayOrder: (q.type == 0 ? q.itemOrder : i)
       }));
     return ordered;
 };
@@ -74,5 +74,15 @@ export const checkout = async (user) => {
 
 export const updatePassword = async (data) => {
     const response = await axios.post("/api/password", data);
+    return response.data;
+}
+
+export const resetPasswordInit =  async (data) => {
+    const response = await axios.post("/api/reset-password", data);
+    return response.data;
+}
+
+export const resetPasswordFinish =  async (data) => {
+    const response = await axios.post("/api/set-new-password", data);
     return response.data;
 }

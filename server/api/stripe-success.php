@@ -46,13 +46,12 @@ try {
 
         try {
             $emailService = new EmailService();
-            $emailBody = file_get_contents(__DIR__ . '/welcomeEmail.html');
             $emailSuccess = $emailService->sendMail($data['email'], "Welcome to Easter Quest!");
         } catch(Exception $e)  {
             $emailSuccess = false;
         }
 
-        Header('Location: /setup?purchase=true&session_id=' . urlencode($session_id) . '&emailSuccess=' . $emailSuccess);
+        Header('Location: /dash/setup?purchase=true&session_id=' . urlencode($session_id) . '&emailSuccess=' . $emailSuccess);
         exit();
     } else {
         // Handle other statuses

@@ -1,5 +1,6 @@
 <template>
     <Dialog
+        header="Welcome!"
         v-model:visible="localActive" modal>
         <div class=text-center>
             <h2>Thank you for buying Easter Quest</h2>
@@ -14,7 +15,7 @@
             <Password
                 type="password"
                 name="password"
-                class="w-100 mb-2"
+                class="mb-2"
                 toggleMask
                 :feedback="false"
                 v-model="newPassword"
@@ -72,7 +73,8 @@ export default {
                 }
             } catch (error) {
                 console.error('Error updating password:', error);
-                this.loading = true;
+                this.errorMsg = 'Could not change password';
+                this.loading = false;
             }
         }
     }

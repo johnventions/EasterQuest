@@ -4,13 +4,17 @@ import ceEgg1 from '@/assets/games/egg_crack_1.png';
 import ceEgg2 from '@/assets/games/egg_crack_2.png';
 import ceEgg3 from '@/assets/games/egg_crack_3.png';
 import grass from '@/assets/games/bg_grass.jpg';
+import ding from '@/assets/games/sounds/ding.mp3';
+import eggCrack from '@/assets/games/sounds/eggCrack.mp3';
 
 import { loadAssets } from '../loader';
+import { soundControls  } from '../soundControls';
 
 import { Application, Assets, Sprite } from 'pixi.js';
+import { Howl } from 'howler';
 
 class GameController {
-    constructor(canvas, width = 300, height = 450) {
+    constructor(canvas, width = 300, height = 450, soundEnabled  = true) {
         const app = new Application({
             width,
             height,
@@ -22,6 +26,9 @@ class GameController {
         canvas.appendChild(app.view);
         this.app = app;
         this.ratio = width / height;
+                
+        const sound = soundControls(soundEnabled);
+        Object.assign(this, sound);
     }
 
     async init() {
@@ -34,6 +41,14 @@ class GameController {
           ];
 
         await loadAssets(this.app, assetsToLoad, 'crackEgg');
+        const dingSound = new Howl({
+            src: [ding],
+            preload: true
+        });
+        const crackSound = new Howl({
+            src: [eggCrack],
+            preload: true
+        });
 
         this.loadGrass(this.app);
         const eggSprite = this.loadEgg(this.app, this.ratio);
@@ -44,6 +59,13 @@ class GameController {
             if (eggSprite.hits < 16) {
                 eggSprite.targetRotation = eggSprite.rotation + 0.5;
                 eggSprite.hits++;
+                if (this.soundEnabled) {
+                    if (eggSprite.hits == 16) {
+                        dingSound.play();
+                    } else {
+                        crackSound.play();
+                    }
+                }
                 switch (eggSprite.hits) {
                     case 5:
                         eggSprite.texture = Assets.get('ce_egg1');

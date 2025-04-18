@@ -1,3 +1,9 @@
+<Files "index.html">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+</Files>
+
 RewriteEngine On    # Turn on the rewriting engine
 RewriteRule ^api/examples api/examples.php    [NC,L]
 
@@ -13,6 +19,8 @@ RewriteRule ^api/logout api/logout.php    [NC,L]
 RewriteRule ^api/sign-up api/force-register.php    [NC,L]
 RewriteRule ^api/checkout api/checkout.php    [NC,L]
 RewriteRule ^api/password api/set-password.php    [NC,L]
+RewriteRule ^api/reset-password api/forgot-password.php    [NC,L]
+RewriteRule ^api/set-new-password api/finish-reset-password.php    [NC,L]
 
 # Allow direct access to existing files (CSS, JS, images, fonts, etc.)
 RewriteCond %{REQUEST_FILENAME} -f
