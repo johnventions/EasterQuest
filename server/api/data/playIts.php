@@ -49,4 +49,20 @@ Edit to choose a specific game (optional)",
     "suggested" => false,
     "bodyText" => "Crack the egg open to reveal a surprise",
   ],
+  [
+    "id" => 1006,
+    "gameId" => 1006,
+    "title" => 'Count The Yellow Peeps',
+    "type" => 3,
+    "suggested" => false,
+    "bodyText" => "Count the number of yellow peeps",
+  ],
+  [
+    "id" => 1007,
+    "gameId" => 1007,
+    "title" => 'Put the Rainbow in order',
+    "type" => 3,
+    "suggested" => false,
+    "bodyText" => "Put the rainbow colors in the correct order",
+  ]
 ];

@@ -31,6 +31,8 @@
             <feed-the-bunny v-if="gameToRender.templateId == 1003" />
             <paint-eggs v-if="gameToRender.templateId == 1004" />
             <crack-the-egg v-if="gameToRender.templateId == 1005" />
+            <count-peeps v-if="gameToRender.templateId == 1006" />
+            <rainbow-order v-if="gameToRender.templateId == 1007" />
         </div>
         <div class="container text-center mt-2">
             <div class="row">
@@ -70,6 +72,8 @@ import EggBasketVue from '@/components/Games/EggBasket/EggBasket.vue';
 import FeedTheBunnyGame from '@/components/Games/FeedTheBunny/FeedTheBunny.vue';
 import PaintEggs from '@/components/Games/PaintEggs/PaintEggs.vue';
 import CrackTheEgg from '@/components/Games/CrackTheEgg/CrackTheEgg.vue';
+import CountPeeps from '@/components/Games/CountThePeeps/CountPeeps.vue';
+import RainbowOrder from '@/components/Games/RainbowOrder/RainbowOrder.vue';
 import { checkout } from '@/services/api.service';
 
 const shuffle = (deck) => {
@@ -87,7 +91,9 @@ export default {
         'egg-basket': EggBasketVue,
         'feed-the-bunny': FeedTheBunnyGame,
         'paint-eggs': PaintEggs,
-        'crack-the-egg': CrackTheEgg
+        'crack-the-egg': CrackTheEgg,
+        'count-peeps': CountPeeps,
+        'rainbow-order': RainbowOrder
     },
     data() {
         return {
